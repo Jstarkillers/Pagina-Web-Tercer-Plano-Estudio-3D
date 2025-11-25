@@ -210,6 +210,8 @@
             font-size: 0.8rem;
             border-bottom: 1px solid rgba(108, 99, 255, 0.2);
             backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1001;
         }
 
         .location-bar .container {
@@ -233,6 +235,14 @@
 
         .locations i {
             color: var(--primary);
+        }
+
+        .location-fabrica i {
+            color: var(--primary);
+        }
+
+        .location-punto-venta i {
+            color: var(--accent);
         }
 
         /* HEADER PRINCIPAL */
@@ -665,6 +675,37 @@
 
         .close-modal:hover {
             color: var(--text);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.8rem;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
         }
 
         /* SECCIÓN HERO */
@@ -1207,6 +1248,33 @@
             justify-content: center;
         }
 
+        .coming-soon {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(26, 26, 46, 0.3);
+            border-radius: 20px;
+            border: 2px dashed rgba(108, 99, 255, 0.3);
+        }
+
+        .coming-soon i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .coming-soon h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .coming-soon p {
+            color: var(--text-light);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
         /* SECCIÓN SERVICIOS */
         .services {
             padding: 6rem 2rem;
@@ -1609,6 +1677,13 @@
 
             .location-bar {
                 font-size: 0.7rem;
+                position: relative;
+                z-index: 1001;
+            }
+            
+            .locations {
+                flex-direction: column;
+                gap: 0.5rem;
             }
         }
 
@@ -1688,9 +1763,9 @@
     <div class="location-bar">
         <div class="container">
             <div class="locations">
-                <span><i class="fas fa-industry"></i> Fábrica: Av. Libertad 845, Chillán</span>
-                <span><i class="fas fa-shopping-mall"></i> Mall Arauco Chillán: Av. Collín #1090</span>
-                <span><i class="fas fa-store"></i> Outlet Vivo Chillán: Avenida Vicente Méndez 1541</span>
+                <span class="location-fabrica"><i class="fas fa-industry"></i> Fábrica: Av. Libertad 845, Chillán</span>
+                <span class="location-punto-venta"><i class="fas fa-map-marker-alt"></i> Mall Arauco Chillán: Av. Collín #1090</span>
+                <span class="location-punto-venta"><i class="fas fa-map-marker-alt"></i> Outlet Vivo Chillán: Avenida Vicente Méndez 1541</span>
             </div>
         </div>
     </div>
@@ -1722,18 +1797,16 @@
                     <li class="nav-item"><a href="#inicio" class="nav-link">Inicio</a></li>
                     <li class="nav-item"><a href="#valores" class="nav-link">Nuestros Valores</a></li>
                     <li class="nav-item"><a href="#quienes-somos" class="nav-link">Quiénes Somos</a></li>
-                    <li class="nav-item"><a href="#catalogo-minorista" class="nav-link">Catálogo Minorista</a></li>
-                    <li class="nav-item"><a href="#catalogo-mayorista" class="nav-link">Catálogo Mayorista</a></li>
+                    <li class="nav-item"><a href="#catalogo" class="nav-link">Catálogo</a></li>
                     <li class="nav-item"><a href="#servicios" class="nav-link">Servicios</a></li>
                     <li class="nav-item"><a href="#contacto" class="nav-link">Contacto</a></li>
                     <li class="nav-item" id="admin-link" style="display:none;"><a href="#admin-panel" class="nav-link">Panel Admin</a></li>
                 </ul>
 
                 <div class="auth-section">
-                    <button class="btn-auth" id="login-btn">Iniciar Sesión</button>
-                    <button class="btn-auth btn-primary" id="register-btn">Registrarse</button>
-                    <button class="btn-auth" id="logout-btn" style="display:none;">Cerrar Sesión</button>
+                    <button class="btn-auth btn-primary" id="auth-btn">Acceder</button>
                     <span id="user-welcome" style="display:none;"></span>
+                    <button class="btn-auth" id="logout-btn" style="display:none;">Cerrar Sesión</button>
                 </div>
 
                 <button class="menu-toggle" id="menu-toggle">
@@ -1752,27 +1825,31 @@
             <li class="mobile-nav-item"><a href="#inicio" class="mobile-nav-link">Inicio</a></li>
             <li class="mobile-nav-item"><a href="#valores" class="mobile-nav-link">Nuestros Valores</a></li>
             <li class="mobile-nav-item"><a href="#quienes-somos" class="mobile-nav-link">Quiénes Somos</a></li>
-            <li class="mobile-nav-item"><a href="#catalogo-minorista" class="mobile-nav-link">Catálogo Minorista</a></li>
-            <li class="mobile-nav-item"><a href="#catalogo-mayorista" class="mobile-nav-link">Catálogo Mayorista</a></li>
+            <li class="mobile-nav-item"><a href="#catalogo" class="mobile-nav-link">Catálogo</a></li>
             <li class="mobile-nav-item"><a href="#servicios" class="mobile-nav-link">Servicios</a></li>
             <li class="mobile-nav-item"><a href="#contacto" class="mobile-nav-link">Contacto</a></li>
             <li class="mobile-nav-item" id="mobile-admin-link" style="display:none;"><a href="#admin-panel" class="mobile-nav-link">Panel Admin</a></li>
         </ul>
         <div class="mobile-auth">
-            <button class="btn-auth" id="mobile-login-btn">Iniciar Sesión</button>
-            <button class="btn-auth btn-primary" id="mobile-register-btn">Registrarse</button>
+            <button class="btn-auth btn-primary" id="mobile-auth-btn">Acceder</button>
             <button class="btn-auth" id="mobile-logout-btn" style="display:none;">Cerrar Sesión</button>
         </div>
     </div>
 
     <div class="overlay" id="overlay"></div>
 
-    <!-- Modales de Login y Registro -->
-    <div class="modal" id="login-modal">
+    <!-- Modal de Autenticación Unificado -->
+    <div class="modal" id="auth-modal">
         <div class="modal-content">
-            <span class="close-modal" id="close-login">&times;</span>
-            <h2>Iniciar Sesión</h2>
-            <form id="login-form">
+            <span class="close-modal" id="close-auth">&times;</span>
+            <h2>Acceder a Tercer Plano</h2>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="login-tab">Iniciar Sesión</button>
+                <button class="auth-tab" id="register-tab">Registrarse</button>
+            </div>
+            
+            <form id="login-form" class="auth-form active">
                 <div class="form-group">
                     <input type="text" id="login-username" placeholder="Usuario" required>
                 </div>
@@ -1781,14 +1858,8 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Ingresar</button>
             </form>
-        </div>
-    </div>
-
-    <div class="modal" id="register-modal">
-        <div class="modal-content">
-            <span class="close-modal" id="close-register">&times;</span>
-            <h2>Registrarse</h2>
-            <form id="register-form">
+            
+            <form id="register-form" class="auth-form">
                 <div class="form-group">
                     <input type="text" id="register-username" placeholder="Usuario" required>
                 </div>
@@ -1810,7 +1881,7 @@
             </h1>
             <p class="hero-description">Creando el futuro del juego sostenible con tecnología de impresión 3D avanzada y materiales ecológicos. Diseñamos y fabricamos juguetes únicos que inspiran creatividad mientras cuidamos nuestro planeta.</p>
             <div class="hero-cta">
-                <a href="#catalogo-minorista" class="btn btn-primary">
+                <a href="#catalogo" class="btn btn-primary">
                     <span>Ver Catálogo</span>
                     <i class="fas fa-chevron-right"></i>
                 </a>
@@ -1952,46 +2023,45 @@
         </div>
     </section>
 
-    <!-- Sección Catálogo Minorista -->
-    <section class="products" id="catalogo-minorista">
+    <!-- Sección Catálogo Unificado -->
+    <section class="products" id="catalogo">
         <div class="container">
             <div class="section-header">
-                <p class="section-subtitle">Para Todos</p>
-                <h2 class="section-title">Catálogo Minorista</h2>
-                <p class="section-description">Descubre nuestros juguetes ecológicos impresos en 3D, disponibles para compra individual. Cada pieza es única y fabricada con materiales sostenibles.</p>
+                <p class="section-subtitle">Nuestros Productos</p>
+                <h2 class="section-title">Catálogo</h2>
+                <p class="section-description">Descubre nuestros juguetes ecológicos impresos en 3D. Cada pieza es única y fabricada con materiales sostenibles.</p>
             </div>
             
-            <div class="products-grid" id="minorista-grid">
-                <!-- Los productos minoristas se cargarán dinámicamente -->
+            <!-- Catálogo Minorista -->
+            <div style="margin-bottom: 4rem;">
+                <h3 style="text-align: center; margin-bottom: 2rem; color: var(--primary);">Catálogo Minorista</h3>
+                <div class="products-grid" id="minorista-grid">
+                    <div class="coming-soon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Pronto Disponible</h3>
+                        <p>Estamos preparando nuestro catálogo minorista con los mejores juguetes ecológicos impresos en 3D. ¡Contáctanos para más información!</p>
+                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20sus%20productos%20minoristas" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
+                            <span>Contactar para Más Información</span>
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
             
-            <div class="cta-buttons" style="justify-content: center;">
-                <a href="https://wa.me/56962485838" target="_blank" class="btn btn-primary">
-                    <span>Personaliza Tu Juguete</span>
-                    <i class="fas fa-magic"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Sección Catálogo Mayorista -->
-    <section class="products wholesale-products" id="catalogo-mayorista">
-        <div class="container">
-            <div class="section-header">
-                <p class="section-subtitle">Para Negocios</p>
-                <h2 class="section-title">Catálogo Mayorista</h2>
-                <p class="section-description">Precios especiales para compras al por mayor. Ideal para tiendas, distribuidores y eventos. ¡Contáctanos para acceder a descuentos exclusivos!</p>
-            </div>
-            
-            <div class="products-grid" id="mayorista-grid">
-                <!-- Los productos mayoristas se cargarán dinámicamente -->
-            </div>
-            
-            <div class="cta-buttons" style="justify-content: center;">
-                <a href="https://wa.me/56962485838" target="_blank" class="btn btn-primary">
-                    <span>Solicitar Catálogo Mayorista Completo</span>
-                    <i class="fas fa-file-alt"></i>
-                </a>
+            <!-- Catálogo Mayorista -->
+            <div class="wholesale-products" style="padding: 3rem 2rem; border-radius: 20px;">
+                <h3 style="text-align: center; margin-bottom: 2rem; color: var(--primary);">Catálogo Mayorista</h3>
+                <div class="products-grid" id="mayorista-grid">
+                    <div class="coming-soon">
+                        <i class="fas fa-truck-loading"></i>
+                        <h3>Pronto Disponible</h3>
+                        <p>Si estás interesado en distribuir nuestros productos, contáctanos para acceder a precios especiales por volumen.</p>
+                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20distribuir%20sus%20productos" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
+                            <span>Contactar para Distribución</span>
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -2077,7 +2147,7 @@
                         <span>Seguir en Instagram</span>
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="#catalogo-minorista" class="btn btn-secondary">
+                    <a href="#catalogo" class="btn btn-secondary">
                         <span>Ver Catálogo Completo</span>
                         <i class="fas fa-box-open"></i>
                     </a>
@@ -2117,7 +2187,6 @@
                     <div class="contact-info">
                         <p><i class="fas fa-map-marker-alt"></i> Chillán, Ñuble, Chile</p>
                         <p><i class="fas fa-phone"></i> +56 9 6248 5838</p>
-                        <p><i class="fas fa-envelope"></i> info@tercerplanoestudio3d.cl</p>
                         <p><i class="fas fa-clock"></i> Lunes a Sábado: 10:00 - 19:00</p>
                     </div>
                 </div>
@@ -2133,706 +2202,687 @@
                     <h3 style="margin-top: 1.5rem;">Nuestras Ubicaciones</h3>
                     <div class="contact-info">
                         <p><i class="fas fa-industry"></i> Fábrica: Av. Libertad 845</p>
-                        <p><i class="fas fa-shopping-mall"></i> Mall Arauco: Av. Collín #1090</p>
-                        <p><i class="fas fa-store"></i> Outlet Vivo: Av. Vicente Méndez 1541</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Mall Arauco: Av. Collín #1090</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Outlet Vivo: Av. Vicente Méndez 1541</p>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2023 Tercer Plano Estudio 3D. Todos los derechos reservados. | Hecho con ❤️ en Chillán, Ñuble</p>
+                <p>&copy; 2025 Tercer Plano Estudio 3D. Todos los derechos reservados. | Hecho con ❤️ en Chillán, Ñuble</p>
             </div>
         </div>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // =============================================
-            // CONFIGURACIÓN INICIAL Y VARIABLES GLOBALES
-            // =============================================
+        // =============================================
+        // CONFIGURACIÓN INICIAL Y VARIABLES GLOBALES
+        // =============================================
+        
+        // Super usuarios predefinidos
+        const SUPER_USERS = {
+            'admin': { password: 'Admin123!', isSuper: true },
+            'paulette': { password: 'Paulette123!', isSuper: true }
+        };
+        
+        // Estado de la aplicación
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let wholesaleProducts = JSON.parse(localStorage.getItem('wholesaleProducts')) || [];
+        
+        // =============================================
+        // INICIALIZACIÓN
+        // =============================================
+        
+        function init() {
+            // Cargar productos si no existen
+            if (products.length === 0) {
+                loadInitialProducts();
+            }
             
-            // Super usuarios predefinidos
-            const SUPER_USERS = {
-                'admin': { password: 'Admin123!', isSuper: true },
-                'paulette': { password: 'Paulette123!', isSuper: true }
-            };
+            // Configurar eventos
+            setupEventListeners();
             
-            // Estado de la aplicación
-            let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-            let products = JSON.parse(localStorage.getItem('products')) || [];
-            let wholesaleProducts = JSON.parse(localStorage.getItem('wholesaleProducts')) || [];
+            // Actualizar UI según estado de autenticación
+            updateUI();
             
-            // Elementos del DOM
+            // Renderizar productos
+            renderProducts();
+            
+            // Iniciar efectos visuales
+            initVisualEffects();
+            
+            // Configurar scroll
+            setupScrollEffects();
+        }
+        
+        // =============================================
+        // CONFIGURACIÓN DE EVENTOS
+        // =============================================
+        
+        function setupEventListeners() {
+            // Navegación móvil
             const menuToggle = document.getElementById('menu-toggle');
             const mobileNav = document.getElementById('mobile-nav');
             const closeMenu = document.getElementById('close-menu');
             const overlay = document.getElementById('overlay');
             
-            // Modales
-            const loginModal = document.getElementById('login-modal');
-            const registerModal = document.getElementById('register-modal');
-            const loginBtn = document.getElementById('login-btn');
-            const registerBtn = document.getElementById('register-btn');
+            if (menuToggle) menuToggle.addEventListener('click', openMobileMenu);
+            if (closeMenu) closeMenu.addEventListener('click', closeMobileMenu);
+            if (overlay) overlay.addEventListener('click', closeMobileMenu);
+            
+            // Cerrar menú al hacer clic en enlaces móviles
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+            
+            // Autenticación unificada
+            const authModal = document.getElementById('auth-modal');
+            const authBtn = document.getElementById('auth-btn');
+            const mobileAuthBtn = document.getElementById('mobile-auth-btn');
             const logoutBtn = document.getElementById('logout-btn');
-            const closeLogin = document.getElementById('close-login');
-            const closeRegister = document.getElementById('close-register');
+            const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+            const closeAuth = document.getElementById('close-auth');
             
-            // Enlaces para usuarios registrados
-            const adminLink = document.getElementById('admin-link');
-            const mobileAdminLink = document.getElementById('mobile-admin-link');
+            // Tabs de autenticación
+            const loginTab = document.getElementById('login-tab');
+            const registerTab = document.getElementById('register-tab');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
             
-            // Secciones
-            const adminSection = document.getElementById('admin-panel');
+            if (authBtn) authBtn.addEventListener('click', () => openModal(authModal));
+            if (mobileAuthBtn) mobileAuthBtn.addEventListener('click', () => openModal(authModal));
+            if (logoutBtn) logoutBtn.addEventListener('click', logout);
+            if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', logout);
+            if (closeAuth) closeAuth.addEventListener('click', () => closeModal(authModal));
             
-            // Botones de administración
+            // Tabs de autenticación
+            if (loginTab) loginTab.addEventListener('click', () => switchAuthTab('login'));
+            if (registerTab) registerTab.addEventListener('click', () => switchAuthTab('register'));
+            
+            // Formularios
+            if (loginForm) loginForm.addEventListener('submit', handleLogin);
+            if (registerForm) registerForm.addEventListener('submit', handleRegister);
+            
+            // Administración
             const addProductBtn = document.getElementById('add-product-btn');
             const refreshProductsBtn = document.getElementById('refresh-products-btn');
             
-            // Grids de productos
-            const minoristaGrid = document.getElementById('minorista-grid');
-            const mayoristaGrid = document.getElementById('mayorista-grid');
-            const adminGrid = document.getElementById('admin-products-grid');
-            
-            // Elementos de bienvenida
-            const userWelcome = document.getElementById('user-welcome');
-            const mobileLoginBtn = document.getElementById('mobile-login-btn');
-            const mobileRegisterBtn = document.getElementById('mobile-register-btn');
-            const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-            
-            // =============================================
-            // INICIALIZACIÓN
-            // =============================================
-            
-            function init() {
-                // Cargar productos si no existen
-                if (products.length === 0) {
-                    loadInitialProducts();
-                }
-                
-                // Configurar eventos
-                setupEventListeners();
-                
-                // Actualizar UI según estado de autenticación
-                updateUI();
-                
-                // Renderizar productos
-                renderProducts();
-                
-                // Iniciar efectos visuales
-                initVisualEffects();
-                
-                // Configurar scroll
-                setupScrollEffects();
+            if (addProductBtn) {
+                addProductBtn.addEventListener('click', showAddProductForm);
+            }
+            if (refreshProductsBtn) {
+                refreshProductsBtn.addEventListener('click', refreshProducts);
             }
             
-            // =============================================
-            // CONFIGURACIÓN DE EVENTOS
-            // =============================================
-            
-            function setupEventListeners() {
-                // Navegación móvil
-                if (menuToggle) menuToggle.addEventListener('click', openMobileMenu);
-                if (closeMenu) closeMenu.addEventListener('click', closeMobileMenu);
-                if (overlay) overlay.addEventListener('click', closeMobileMenu);
-                
-                // Cerrar menú al hacer clic en enlaces móviles
-                document.querySelectorAll('.mobile-nav-link').forEach(link => {
-                    link.addEventListener('click', closeMobileMenu);
-                });
-                
-                // Autenticación
-                if (loginBtn) loginBtn.addEventListener('click', () => openModal(loginModal));
-                if (registerBtn) registerBtn.addEventListener('click', () => openModal(registerModal));
-                if (mobileLoginBtn) mobileLoginBtn.addEventListener('click', () => openModal(loginModal));
-                if (mobileRegisterBtn) mobileRegisterBtn.addEventListener('click', () => openModal(registerModal));
-                if (logoutBtn) logoutBtn.addEventListener('click', logout);
-                if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', logout);
-                
-                // Cerrar modales
-                if (closeLogin) closeLogin.addEventListener('click', () => closeModal(loginModal));
-                if (closeRegister) closeRegister.addEventListener('click', () => closeModal(registerModal));
-                
-                // Formularios
-                const loginForm = document.getElementById('login-form');
-                const registerForm = document.getElementById('register-form');
-                if (loginForm) loginForm.addEventListener('submit', handleLogin);
-                if (registerForm) registerForm.addEventListener('submit', handleRegister);
-                
-                // Administración
-                if (addProductBtn) {
-                    addProductBtn.addEventListener('click', showAddProductForm);
-                }
-                if (refreshProductsBtn) {
-                    refreshProductsBtn.addEventListener('click', refreshProducts);
-                }
-                
-                // Scroll suave para enlaces internos
-                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const targetId = this.getAttribute('href');
-                        if (targetId === '#') return;
-                        const targetElement = document.querySelector(targetId);
-                        if (targetElement) {
-                            window.scrollTo({
-                                top: targetElement.offsetTop - 100,
-                                behavior: 'smooth'
-                            });
-                        }
-                    });
-                });
-            }
-            
-            function setupScrollEffects() {
-                // Header scroll effect
-                window.addEventListener('scroll', function() {
-                    const header = document.querySelector('.header');
-                    if (window.scrollY > 50) {
-                        header.classList.add('scrolled');
-                    } else {
-                        header.classList.remove('scrolled');
+            // Scroll suave para enlaces internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
                     }
                 });
-            }
-            
-            // =============================================
-            // FUNCIONALIDADES DE INTERFAZ
-            // =============================================
-            
-            function openMobileMenu() {
-                if (!mobileNav || !overlay) return;
-                mobileNav.classList.add('active');
-                overlay.classList.add('active');
-                menuToggle.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            function closeMobileMenu() {
-                if (!mobileNav || !overlay) return;
-                mobileNav.classList.remove('active');
-                overlay.classList.remove('active');
-                menuToggle.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            
-            function openModal(modal) {
-                if (!modal) return;
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            }
-            
-            function closeModal(modal) {
-                if (!modal) return;
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-            
-            function updateUI() {
-                if (currentUser) {
-                    // Usuario logueado
-                    if (loginBtn) loginBtn.style.display = 'none';
-                    if (registerBtn) registerBtn.style.display = 'none';
-                    if (logoutBtn) logoutBtn.style.display = 'block';
-                    if (mobileLoginBtn) mobileLoginBtn.style.display = 'none';
-                    if (mobileRegisterBtn) mobileRegisterBtn.style.display = 'none';
-                    if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'block';
-                    if (userWelcome) {
-                        userWelcome.textContent = `Hola, ${currentUser.username}`;
-                        userWelcome.style.display = 'inline';
-                    }
-                    
-                    // Si es super usuario, mostrar panel de administración
-                    if (currentUser.isSuper) {
-                        if (adminLink) adminLink.style.display = 'block';
-                        if (mobileAdminLink) mobileAdminLink.style.display = 'block';
-                        if (adminSection) adminSection.style.display = 'block';
-                    } else {
-                        if (adminLink) adminLink.style.display = 'none';
-                        if (mobileAdminLink) mobileAdminLink.style.display = 'none';
-                        if (adminSection) adminSection.style.display = 'none';
-                    }
+            });
+        }
+        
+        function setupScrollEffects() {
+            // Header scroll effect
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('.header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
                 } else {
-                    // Usuario no logueado
-                    if (loginBtn) loginBtn.style.display = 'block';
-                    if (registerBtn) registerBtn.style.display = 'block';
-                    if (logoutBtn) logoutBtn.style.display = 'none';
-                    if (mobileLoginBtn) mobileLoginBtn.style.display = 'block';
-                    if (mobileRegisterBtn) mobileRegisterBtn.style.display = 'block';
-                    if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'none';
-                    if (userWelcome) userWelcome.style.display = 'none';
-                    
-                    // Ocultar panel de administración
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+        
+        // =============================================
+        // FUNCIONALIDADES DE INTERFAZ
+        // =============================================
+        
+        function openMobileMenu() {
+            const mobileNav = document.getElementById('mobile-nav');
+            const overlay = document.getElementById('overlay');
+            const menuToggle = document.getElementById('menu-toggle');
+            
+            if (!mobileNav || !overlay) return;
+            mobileNav.classList.add('active');
+            overlay.classList.add('active');
+            menuToggle.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            const mobileNav = document.getElementById('mobile-nav');
+            const overlay = document.getElementById('overlay');
+            const menuToggle = document.getElementById('menu-toggle');
+            
+            if (!mobileNav || !overlay) return;
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+            menuToggle.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function openModal(modal) {
+            if (!modal) return;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal(modal) {
+            if (!modal) return;
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        
+        function switchAuthTab(tab) {
+            const loginTab = document.getElementById('login-tab');
+            const registerTab = document.getElementById('register-tab');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+            } else {
+                loginTab.classList.remove('active');
+                registerTab.classList.add('active');
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+            }
+        }
+        
+        function updateUI() {
+            const authBtn = document.getElementById('auth-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const mobileAuthBtn = document.getElementById('mobile-auth-btn');
+            const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+            const userWelcome = document.getElementById('user-welcome');
+            const adminLink = document.getElementById('admin-link');
+            const mobileAdminLink = document.getElementById('mobile-admin-link');
+            const adminSection = document.getElementById('admin-panel');
+            
+            if (currentUser) {
+                // Usuario logueado
+                if (authBtn) authBtn.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'block';
+                if (mobileAuthBtn) mobileAuthBtn.style.display = 'none';
+                if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'block';
+                if (userWelcome) {
+                    userWelcome.textContent = `Hola, ${currentUser.username}`;
+                    userWelcome.style.display = 'inline';
+                }
+                
+                // Si es super usuario, mostrar panel de administración
+                if (currentUser.isSuper) {
+                    if (adminLink) adminLink.style.display = 'block';
+                    if (mobileAdminLink) mobileAdminLink.style.display = 'block';
+                    if (adminSection) adminSection.style.display = 'block';
+                } else {
                     if (adminLink) adminLink.style.display = 'none';
                     if (mobileAdminLink) mobileAdminLink.style.display = 'none';
                     if (adminSection) adminSection.style.display = 'none';
                 }
+            } else {
+                // Usuario no logueado
+                if (authBtn) authBtn.style.display = 'block';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+                if (mobileAuthBtn) mobileAuthBtn.style.display = 'block';
+                if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'none';
+                if (userWelcome) userWelcome.style.display = 'none';
                 
-                // Renderizar productos según permisos
-                renderProducts();
+                // Ocultar panel de administración
+                if (adminLink) adminLink.style.display = 'none';
+                if (mobileAdminLink) mobileAdminLink.style.display = 'none';
+                if (adminSection) adminSection.style.display = 'none';
             }
             
-            // =============================================
-            // SISTEMA DE AUTENTICACIÓN
-            // =============================================
+            // Renderizar productos según permisos
+            renderProducts();
+        }
+        
+        // =============================================
+        // SISTEMA DE AUTENTICACIÓN
+        // =============================================
+        
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
             
-            function handleLogin(e) {
-                e.preventDefault();
-                const username = document.getElementById('login-username').value;
-                const password = document.getElementById('login-password').value;
-                
-                // Validaciones
-                if (!username || !password) {
-                    showNotification('Por favor, completa todos los campos', 'error');
-                    return;
-                }
-                
-                // Verificar si es un super usuario
-                if (SUPER_USERS[username] && SUPER_USERS[username].password === password) {
-                    currentUser = {
-                        username: username,
-                        isSuper: true
-                    };
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUI();
-                    closeModal(loginModal);
-                    showNotification('¡Bienvenido, administrador!', 'success');
-                    return;
-                }
-                
-                // Verificar usuarios normales
-                const users = JSON.parse(localStorage.getItem('users')) || [];
-                const user = users.find(u => u.username === username && u.password === password);
-                
-                if (user) {
-                    currentUser = {
-                        username: username,
-                        isSuper: false
-                    };
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    updateUI();
-                    closeModal(loginModal);
-                    showNotification('¡Sesión iniciada correctamente!', 'success');
-                } else {
-                    showNotification('Usuario o contraseña incorrectos', 'error');
-                }
+            // Validaciones
+            if (!username || !password) {
+                showNotification('Por favor, completa todos los campos', 'error');
+                return;
             }
             
-            function handleRegister(e) {
-                e.preventDefault();
-                const username = document.getElementById('register-username').value;
-                const password = document.getElementById('register-password').value;
-                
-                // Validaciones básicas
-                if (username.length < 3) {
-                    showNotification('El usuario debe tener al menos 3 caracteres', 'error');
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
-                    return;
-                }
-                
-                // Verificar si el usuario ya existe
-                const users = JSON.parse(localStorage.getItem('users')) || [];
-                if (users.find(u => u.username === username)) {
-                    showNotification('El usuario ya existe', 'error');
-                    return;
-                }
-                
-                // Registrar nuevo usuario
-                users.push({ username, password });
-                localStorage.setItem('users', JSON.stringify(users));
-                
-                // Iniciar sesión automáticamente
+            // Verificar si es un super usuario
+            if (SUPER_USERS[username] && SUPER_USERS[username].password === password) {
+                currentUser = {
+                    username: username,
+                    isSuper: true
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateUI();
+                closeModal(document.getElementById('auth-modal'));
+                showNotification('¡Bienvenido, administrador!', 'success');
+                return;
+            }
+            
+            // Verificar usuarios normales
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
                 currentUser = {
                     username: username,
                     isSuper: false
                 };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                
                 updateUI();
-                closeModal(registerModal);
-                showNotification('¡Registro exitoso! Bienvenido/a', 'success');
+                closeModal(document.getElementById('auth-modal'));
+                showNotification('¡Sesión iniciada correctamente!', 'success');
+            } else {
+                showNotification('Usuario o contraseña incorrectos', 'error');
+            }
+        }
+        
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            
+            // Validaciones básicas
+            if (username.length < 3) {
+                showNotification('El usuario debe tener al menos 3 caracteres', 'error');
+                return;
             }
             
-            function logout() {
-                currentUser = null;
-                localStorage.removeItem('currentUser');
-                updateUI();
-                showNotification('Sesión cerrada correctamente', 'info');
+            if (password.length < 6) {
+                showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
+                return;
             }
             
-            // =============================================
-            // GESTIÓN DE PRODUCTOS
-            // =============================================
+            // Verificar si el usuario ya existe
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.find(u => u.username === username)) {
+                showNotification('El usuario ya existe', 'error');
+                return;
+            }
             
-            function loadInitialProducts() {
-                // Productos minoristas
-                products = [
-                    {
-                        id: 1,
-                        name: 'Dragón Articulado',
-                        description: 'Impresionante dragón con cuerpo flexible y articulado, perfecto para juegos de fantasía. Impreso con filamento PLA biodegradable.',
-                        price: 18500,
-                        image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                        category: 'animales'
-                    },
-                    {
-                        id: 2,
-                        name: 'Robot Flexi',
-                        description: 'Robot articulado con extremidades flexibles, ideal para desarrollar la imaginación. Fabricado con materiales 100% ecológicos.',
-                        price: 15000,
-                        image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                        category: 'robots'
-                    },
-                    {
-                        id: 3,
-                        name: 'Dinosaurio Articulado',
-                        description: 'Tyrannosaurus Rex con mandíbula móvil y articulaciones flexibles. Juguete educativo sobre prehistoria.',
-                        price: 16800,
-                        image: 'https://images.unsplash.com/photo-1596870239757-1a5db1efa261?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                        category: 'animales'
-                    },
-                    {
-                        id: 6,
-                        name: 'Puzzle 3D Geométrico',
-                        description: 'Desafía tu mente con este puzzle 3D de formas geométricas. Perfecto para desarrollar habilidades espaciales.',
-                        price: 12500,
-                        image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                        category: 'educativos'
-                    }
-                ];
-                
-                // Productos mayoristas
-                wholesaleProducts = [
-                    {
-                        id: 4,
-                        name: 'Lote de 10 Dragones Articulados',
-                        description: 'Pack mayorista de 10 dragones articulados. Ideal para revendedores. Precio especial por volumen.',
-                        price: 150000,
-                        image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                        category: 'animales',
-                        minQuantity: 10
-                    },
-                    {
-                        id: 5,
-                        name: 'Lote de 15 Robots Flexi',
-                        description: 'Pack mayorista de 15 robots flexi. Perfecto para tiendas de juguetes. Descuento por cantidad.',
-                        price: 180000,
-                        image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                        category: 'robots',
-                        minQuantity: 15
-                    },
-                    {
-                        id: 7,
-                        name: 'Kit Educativo STEM',
-                        description: 'Lote de 20 kits educativos STEM que incluyen rompecabezas y figuras geométricas. Perfecto para colegios y talleres.',
-                        price: 240000,
-                        image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-                        category: 'educativos',
-                        minQuantity: 20
-                    }
-                ];
-                
-                localStorage.setItem('products', JSON.stringify(products));
+            // Registrar nuevo usuario
+            users.push({ username, password });
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Iniciar sesión automáticamente
+            currentUser = {
+                username: username,
+                isSuper: false
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            updateUI();
+            closeModal(document.getElementById('auth-modal'));
+            showNotification('¡Registro exitoso! Bienvenido/a', 'success');
+        }
+        
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateUI();
+            showNotification('Sesión cerrada correctamente', 'info');
+        }
+        
+        // =============================================
+        // GESTIÓN DE PRODUCTOS
+        // =============================================
+        
+        function loadInitialProducts() {
+            // Productos minoristas - Vacío para mostrar "Pronto Disponible"
+            products = [];
+            
+            // Productos mayoristas - Vacío por ahora
+            wholesaleProducts = [];
+            
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+        }
+        
+        function renderProducts() {
+            renderMinoristaProducts();
+            renderMayoristaProducts();
+            renderAdminProducts();
+        }
+        
+        function renderMinoristaProducts() {
+            const minoristaGrid = document.getElementById('minorista-grid');
+            if (!minoristaGrid) return;
+            
+            minoristaGrid.innerHTML = '';
+            
+            // Mostrar mensaje de "pronto disponible" para minorista
+            const comingSoon = document.createElement('div');
+            comingSoon.className = 'coming-soon';
+            comingSoon.innerHTML = `
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Pronto Disponible</h3>
+                <p>Estamos preparando nuestro catálogo minorista con los mejores juguetes ecológicos impresos en 3D. ¡Contáctanos para más información!</p>
+                <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20sus%20productos%20minoristas" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
+                    <span>Contactar para Más Información</span>
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            `;
+            minoristaGrid.appendChild(comingSoon);
+        }
+        
+        function renderMayoristaProducts() {
+            const mayoristaGrid = document.getElementById('mayorista-grid');
+            if (!mayoristaGrid) return;
+            
+            mayoristaGrid.innerHTML = '';
+            
+            // Mostrar mensaje de "pronto disponible" para mayorista
+            const comingSoon = document.createElement('div');
+            comingSoon.className = 'coming-soon';
+            comingSoon.innerHTML = `
+                <i class="fas fa-truck-loading"></i>
+                <h3>Pronto Disponible</h3>
+                <p>Si estás interesado en distribuir nuestros productos, contáctanos para acceder a precios especiales por volumen.</p>
+                <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20distribuir%20sus%20productos" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
+                    <span>Contactar para Distribución</span>
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            `;
+            mayoristaGrid.appendChild(comingSoon);
+        }
+        
+        function renderAdminProducts() {
+            const adminGrid = document.getElementById('admin-products-grid');
+            if (!adminGrid) return;
+            
+            adminGrid.innerHTML = '';
+            
+            // Combinar productos minoristas y mayoristas para administración
+            const allProducts = [...products, ...wholesaleProducts];
+            
+            allProducts.forEach(product => {
+                const adminCard = createAdminProductCard(product);
+                adminGrid.appendChild(adminCard);
+            });
+        }
+        
+        function createProductCard(product, isWholesale) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            
+            let priceHTML = `<div class="product-price">$${product.price.toLocaleString('es-CL')}</div>`;
+            if (product.price2) {
+                priceHTML = `
+                    <div class="product-price">1 unidad: $${product.price.toLocaleString('es-CL')}</div>
+                    <div class="product-price">2 unidades: $${product.price2.toLocaleString('es-CL')}</div>
+                `;
+            }
+            
+            card.innerHTML = `
+                <div class="product-image">
+                    <img src="${product.image}" alt="${product.name}" loading="lazy">
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">${product.name}</h3>
+                    <p class="product-description">${product.description}</p>
+                    ${priceHTML}
+                    ${isWholesale && product.minQuantity ? `<div class="product-min-quantity">Mínimo: ${product.minQuantity} unidades</div>` : ''}
+                    <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20${encodeURIComponent(product.name)}" target="_blank" class="btn btn-primary">
+                        <span>Consultar por WhatsApp</span>
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            `;
+            return card;
+        }
+        
+        function createAdminProductCard(product) {
+            const isWholesale = product.minQuantity !== undefined;
+            const card = document.createElement('div');
+            card.className = 'admin-product-card';
+            card.innerHTML = `
+                <div class="admin-product-header">
+                    <h3 class="admin-product-title">${product.name}</h3>
+                    <div class="admin-product-actions">
+                        <button class="admin-btn btn-edit" data-id="${product.id}" data-wholesale="${isWholesale}">Editar</button>
+                        <button class="admin-btn btn-delete" data-id="${product.id}" data-wholesale="${isWholesale}">Eliminar</button>
+                    </div>
+                </div>
+                <div class="admin-product-details">
+                    <p><strong>Precio:</strong> $${product.price.toLocaleString('es-CL')}</p>
+                    ${product.price2 ? `<p><strong>Precio 2 unidades:</strong> $${product.price2.toLocaleString('es-CL')}</p>` : ''}
+                    <p><strong>Categoría:</strong> ${product.category || 'Sin categoría'}</p>
+                    ${isWholesale ? `<p><strong>Tipo:</strong> Mayorista (Mín. ${product.minQuantity} unidades)</p>` : '<p><strong>Tipo:</strong> Minorista</p>'}
+                    <p>${product.description}</p>
+                </div>
+            `;
+            
+            // Agregar eventos a los botones
+            const editBtn = card.querySelector('.btn-edit');
+            const deleteBtn = card.querySelector('.btn-delete');
+            
+            if (editBtn) editBtn.addEventListener('click', () => editProduct(product.id, isWholesale));
+            if (deleteBtn) deleteBtn.addEventListener('click', () => deleteProduct(product.id, isWholesale));
+            
+            return card;
+        }
+        
+        function showAddProductForm() {
+            const name = prompt('Nombre del producto:');
+            if (!name) return;
+            
+            const description = prompt('Descripción del producto:');
+            if (!description) return;
+            
+            const price = parseFloat(prompt('Precio del producto:'));
+            if (isNaN(price)) return;
+            
+            const category = prompt('Categoría (animales, robots, educativos, etc.):') || 'general';
+            
+            const isWholesale = confirm('¿Es un producto mayorista?');
+            let minQuantity = 0;
+            if (isWholesale) {
+                minQuantity = parseInt(prompt('Cantidad mínima para venta mayorista:'));
+                if (isNaN(minQuantity)) minQuantity = 10;
+            }
+            
+            const newProduct = {
+                id: Date.now(), // ID simple basado en timestamp
+                name,
+                description,
+                price,
+                category,
+                image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+            };
+            
+            if (isWholesale) {
+                newProduct.minQuantity = minQuantity;
+                wholesaleProducts.push(newProduct);
                 localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+            } else {
+                products.push(newProduct);
+                localStorage.setItem('products', JSON.stringify(products));
             }
             
-            function renderProducts() {
-                renderMinoristaProducts();
-                renderMayoristaProducts();
-                renderAdminProducts();
+            renderProducts();
+            showNotification('Producto agregado correctamente', 'success');
+        }
+        
+        function editProduct(id, isWholesale) {
+            const productList = isWholesale ? wholesaleProducts : products;
+            const product = productList.find(p => p.id === id);
+            
+            if (!product) {
+                showNotification('Producto no encontrado', 'error');
+                return;
             }
             
-            function renderMinoristaProducts() {
-                if (!minoristaGrid) return;
-                
-                minoristaGrid.innerHTML = '';
-                
-                products.forEach(product => {
-                    const productCard = createProductCard(product, false);
-                    minoristaGrid.appendChild(productCard);
-                });
+            const newName = prompt('Nuevo nombre:', product.name);
+            if (newName === null) return;
+            
+            const newDescription = prompt('Nueva descripción:', product.description);
+            if (newDescription === null) return;
+            
+            const newPrice = parseFloat(prompt('Nuevo precio:', product.price));
+            if (isNaN(newPrice)) {
+                showNotification('Precio inválido', 'error');
+                return;
             }
             
-            function renderMayoristaProducts() {
-                if (!mayoristaGrid) return;
-                
-                mayoristaGrid.innerHTML = '';
-                
-                wholesaleProducts.forEach(product => {
-                    const productCard = createProductCard(product, true);
-                    mayoristaGrid.appendChild(productCard);
-                });
+            product.name = newName;
+            product.description = newDescription;
+            product.price = newPrice;
+            
+            if (isWholesale) {
+                localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+            } else {
+                localStorage.setItem('products', JSON.stringify(products));
             }
             
-            function renderAdminProducts() {
-                if (!adminGrid) return;
-                
-                adminGrid.innerHTML = '';
-                
-                // Combinar productos minoristas y mayoristas para administración
-                const allProducts = [...products, ...wholesaleProducts];
-                
-                allProducts.forEach(product => {
-                    const adminCard = createAdminProductCard(product);
-                    adminGrid.appendChild(adminCard);
-                });
+            renderProducts();
+            showNotification('Producto actualizado correctamente', 'success');
+        }
+        
+        function deleteProduct(id, isWholesale) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+            
+            if (isWholesale) {
+                wholesaleProducts = wholesaleProducts.filter(p => p.id !== id);
+                localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+            } else {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('products', JSON.stringify(products));
             }
             
-            function createProductCard(product, isWholesale) {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <div class="product-image">
-                        <img src="${product.image}" alt="${product.name}" loading="lazy">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">${product.name}</h3>
-                        <p class="product-description">${product.description}</p>
-                        <div class="product-price">$${product.price.toLocaleString('es-CL')}</div>
-                        ${isWholesale && product.minQuantity ? `<div class="product-min-quantity">Mínimo: ${product.minQuantity} unidades</div>` : ''}
-                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20${encodeURIComponent(product.name)}" target="_blank" class="btn btn-primary">
-                            <span>Consultar por WhatsApp</span>
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                `;
-                return card;
-            }
-            
-            function createAdminProductCard(product) {
-                const isWholesale = product.minQuantity !== undefined;
-                const card = document.createElement('div');
-                card.className = 'admin-product-card';
-                card.innerHTML = `
-                    <div class="admin-product-header">
-                        <h3 class="admin-product-title">${product.name}</h3>
-                        <div class="admin-product-actions">
-                            <button class="admin-btn btn-edit" data-id="${product.id}" data-wholesale="${isWholesale}">Editar</button>
-                            <button class="admin-btn btn-delete" data-id="${product.id}" data-wholesale="${isWholesale}">Eliminar</button>
-                        </div>
-                    </div>
-                    <div class="admin-product-details">
-                        <p><strong>Precio:</strong> $${product.price.toLocaleString('es-CL')}</p>
-                        <p><strong>Categoría:</strong> ${product.category || 'Sin categoría'}</p>
-                        ${isWholesale ? `<p><strong>Tipo:</strong> Mayorista (Mín. ${product.minQuantity} unidades)</p>` : '<p><strong>Tipo:</strong> Minorista</p>'}
-                        <p>${product.description}</p>
-                    </div>
-                `;
-                
-                // Agregar eventos a los botones
-                const editBtn = card.querySelector('.btn-edit');
-                const deleteBtn = card.querySelector('.btn-delete');
-                
-                if (editBtn) editBtn.addEventListener('click', () => editProduct(product.id, isWholesale));
-                if (deleteBtn) deleteBtn.addEventListener('click', () => deleteProduct(product.id, isWholesale));
-                
-                return card;
-            }
-            
-            function showAddProductForm() {
-                const name = prompt('Nombre del producto:');
-                if (!name) return;
-                
-                const description = prompt('Descripción del producto:');
-                if (!description) return;
-                
-                const price = parseFloat(prompt('Precio del producto:'));
-                if (isNaN(price)) return;
-                
-                const category = prompt('Categoría (animales, robots, educativos, etc.):') || 'general';
-                
-                const isWholesale = confirm('¿Es un producto mayorista?');
-                let minQuantity = 0;
-                if (isWholesale) {
-                    minQuantity = parseInt(prompt('Cantidad mínima para venta mayorista:'));
-                    if (isNaN(minQuantity)) minQuantity = 10;
-                }
-                
-                const newProduct = {
-                    id: Date.now(), // ID simple basado en timestamp
-                    name,
-                    description,
-                    price,
-                    category,
-                    image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
-                };
-                
-                if (isWholesale) {
-                    newProduct.minQuantity = minQuantity;
-                    wholesaleProducts.push(newProduct);
-                    localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
-                } else {
-                    products.push(newProduct);
-                    localStorage.setItem('products', JSON.stringify(products));
-                }
-                
-                renderProducts();
-                showNotification('Producto agregado correctamente', 'success');
-            }
-            
-            function editProduct(id, isWholesale) {
-                const productList = isWholesale ? wholesaleProducts : products;
-                const product = productList.find(p => p.id === id);
-                
-                if (!product) {
-                    showNotification('Producto no encontrado', 'error');
-                    return;
-                }
-                
-                const newName = prompt('Nuevo nombre:', product.name);
-                if (newName === null) return;
-                
-                const newDescription = prompt('Nueva descripción:', product.description);
-                if (newDescription === null) return;
-                
-                const newPrice = parseFloat(prompt('Nuevo precio:', product.price));
-                if (isNaN(newPrice)) {
-                    showNotification('Precio inválido', 'error');
-                    return;
-                }
-                
-                product.name = newName;
-                product.description = newDescription;
-                product.price = newPrice;
-                
-                if (isWholesale) {
-                    localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
-                } else {
-                    localStorage.setItem('products', JSON.stringify(products));
-                }
-                
-                renderProducts();
-                showNotification('Producto actualizado correctamente', 'success');
-            }
-            
-            function deleteProduct(id, isWholesale) {
-                if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
-                
-                if (isWholesale) {
-                    wholesaleProducts = wholesaleProducts.filter(p => p.id !== id);
-                    localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
-                } else {
-                    products = products.filter(p => p.id !== id);
-                    localStorage.setItem('products', JSON.stringify(products));
-                }
-                
-                renderProducts();
-                showNotification('Producto eliminado correctamente', 'success');
-            }
-            
-            function refreshProducts() {
-                renderProducts();
-                showNotification('Productos actualizados', 'info');
-            }
-            
-            // =============================================
-            // EFECTOS VISUALES
-            // =============================================
-            
-            function initVisualEffects() {
-                // Efecto de escritura para el título
-                const heroTitle = document.querySelector('.hero-title');
-                if (heroTitle) {
-                    const titleLines = heroTitle.querySelectorAll('.title-line');
-                    titleLines.forEach((line, index) => {
-                        const text = line.textContent;
-                        line.textContent = '';
-                        let i = 0;
-                        
-                        setTimeout(() => {
-                            const typeWriter = setInterval(() => {
-                                if (i < text.length) {
-                                    line.textContent += text.charAt(i);
-                                    i++;
-                                } else {
-                                    clearInterval(typeWriter);
-                                }
-                            }, 100);
-                        }, index * 500);
-                    });
-                }
-                
-                // Partículas animadas
-                createParticles();
-            }
-            
-            function createParticles() {
-                const container = document.getElementById('particles-container');
-                if (!container) return; // Evitar errores si no existe
-                
-                const particleCount = 30;
-                
-                // Obtener colores de variables CSS (con fallback)
-                const cssPrimary = getCSSVar('--primary') || '#00ff88';
-                const cssSecondary = getCSSVar('--secondary') || '#6c63ff';
-                const cssAccent = getCSSVar('--accent') || '#ff2e63';
-                const colors = [cssPrimary.trim(), cssSecondary.trim(), cssAccent.trim()];
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle';
+            renderProducts();
+            showNotification('Producto eliminado correctamente', 'success');
+        }
+        
+        function refreshProducts() {
+            renderProducts();
+            showNotification('Productos actualizados', 'info');
+        }
+        
+        // =============================================
+        // EFECTOS VISUALES
+        // =============================================
+        
+        function initVisualEffects() {
+            // Efecto de escritura para el título
+            const heroTitle = document.querySelector('.hero-title');
+            if (heroTitle) {
+                const titleLines = heroTitle.querySelectorAll('.title-line');
+                titleLines.forEach((line, index) => {
+                    const text = line.textContent;
+                    line.textContent = '';
+                    let i = 0;
                     
-                    // Posición aleatoria
-                    const left = Math.random() * 100;
-                    const size = Math.random() * 4 + 2;
-                    const delay = Math.random() * 15;
-                    const duration = Math.random() * 10 + 10;
-                    
-                    particle.style.left = `${left}%`;
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.animationDelay = `${delay}s`;
-                    particle.style.animationDuration = `${duration}s`;
-                    
-                    // Color aleatorio
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    particle.style.background = color;
-                    
-                    container.appendChild(particle);
-                }
-            }
-            
-            // =============================================
-            // UTILIDADES
-            // =============================================
-            
-            function showNotification(message, type = 'info') {
-                // Crear elemento de notificación
-                const notification = document.createElement('div');
-                notification.className = `notification notification-${type}`;
-                notification.textContent = message;
-                
-                // Agregar al DOM
-                document.body.appendChild(notification);
-                
-                // Animación de entrada
-                setTimeout(() => {
-                    notification.classList.add('show');
-                }, 100);
-                
-                // Eliminar después de 3 segundos
-                setTimeout(() => {
-                    notification.classList.remove('show');
                     setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.parentNode.removeChild(notification);
-                        }
-                    }, 300);
-                }, 3000);
+                        const typeWriter = setInterval(() => {
+                            if (i < text.length) {
+                                line.textContent += text.charAt(i);
+                                i++;
+                            } else {
+                                clearInterval(typeWriter);
+                            }
+                        }, 100);
+                    }, index * 500);
+                });
             }
             
-            function getCSSVar(name) {
-                return getComputedStyle(document.documentElement).getPropertyValue(name);
+            // Partículas animadas
+            createParticles();
+        }
+        
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            if (!container) return; // Evitar errores si no existe
+            
+            const particleCount = 30;
+            
+            // Obtener colores de variables CSS (con fallback)
+            const cssPrimary = getCSSVar('--primary') || '#00ff88';
+            const cssSecondary = getCSSVar('--secondary') || '#6c63ff';
+            const cssAccent = getCSSVar('--accent') || '#ff2e63';
+            const colors = [cssPrimary.trim(), cssSecondary.trim(), cssAccent.trim()];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Posición aleatoria
+                const left = Math.random() * 100;
+                const size = Math.random() * 4 + 2;
+                const delay = Math.random() * 15;
+                const duration = Math.random() * 10 + 10;
+                
+                particle.style.left = `${left}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Color aleatorio
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.background = color;
+                
+                container.appendChild(particle);
             }
+        }
+        
+        // =============================================
+        // UTILIDADES
+        // =============================================
+        
+        function showNotification(message, type = 'info') {
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
             
-            // =============================================
-            // INICIAR APLICACIÓN
-            // =============================================
+            // Agregar al DOM
+            document.body.appendChild(notification);
             
-            init();
-        });
+            // Animación de entrada
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Eliminar después de 3 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+        
+        function getCSSVar(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name);
+        }
+        
+        // =============================================
+        // INICIAR APLICACIÓN
+        // =============================================
+        
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
