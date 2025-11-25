@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tercer Plano - Juguetería Ecológica 3D</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Fondo futurista -->
+    <div class="futuristic-bg">
+        <div class="grid-lines"></div>
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="#">
+                    <div class="logo-icon">
+                        <div class="cube">
+                            <div class="face front">3D</div>
+                            <div class="face back"></div>
+                            <div class="face top"></div>
+                            <div class="face bottom"></div>
+                            <div class="face left"></div>
+                            <div class="face right"></div>
+                        </div>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">TERCER PLANO</span>
+                        <span class="logo-sub">ESTUDIO 3D</span>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#inicio" class="nav-link">Inicio</a></li>
+                    <li class="nav-item"><a href="#quienes-somos" class="nav-link">Quiénes Somos</a></li>
+                    <li class="nav-item"><a href="#productos" class="nav-link">Productos</a></li>
+                    <li class="nav-item"><a href="#servicios" class="nav-link">Servicios</a></li>
+                    <li class="nav-item"><a href="#contacto" class="nav-link">Contacto</a></li>
+                </ul>
+
+                <button class="menu-toggle" id="menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Menú móvil -->
+    <div class="mobile-nav" id="mobile-nav">
+        <button class="close-menu" id="close-menu">&times;</button>
+        <ul class="mobile-nav-list">
+            <li class="mobile-nav-item"><a href="#inicio" class="mobile-nav-link">Inicio</a></li>
+            <li class="mobile-nav-item"><a href="#quienes-somos" class="mobile-nav-link">Quiénes Somos</a></li>
+            <li class="mobile-nav-item"><a href="#productos" class="mobile-nav-link">Productos</a></li>
+            <li class="mobile-nav-item"><a href="#servicios" class="mobile-nav-link">Servicios</a></li>
+            <li class="mobile-nav-item"><a href="#contacto" class="mobile-nav-link">Contacto</a></li>
+        </ul>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Sección Hero -->
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="title-line">Impresión 3D</span>
+                <span class="title-line accent">Ecológica</span>
+                <span class="title-line">en Ñuble</span>
+            </h1>
+            <p class="hero-description">Creando el futuro del juego sostenible con tecnología de impresión 3D avanzada y materiales ecológicos.</p>
+            <div class="hero-cta">
+                <a href="#productos" class="btn btn-primary">
+                    <span>Ver Productos</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                <a href="https://wa.me/56962485838" target="_blank" class="btn btn-secondary">
+                    <span>Contactar por WhatsApp</span>
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-objects">
+                <div class="object obj-1">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <div class="object obj-2">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="object obj-3">
+                    <i class="fas fa-tree"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Quiénes Somos -->
+    <section class="about" id="quienes-somos">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Nuestra Historia</p>
+                <h2 class="section-title">Quiénes Somos</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>En el corazón de Chillán, Ñuble, nace <strong>Tercer Plano Estudio 3D</strong>, un emprendimiento familiar fundado por los hermanos <strong>Paulette Plaza</strong> y <strong>Jesús Rojas</strong>, dedicado a la creación de juguetes ecológicos mediante impresión 3D.</p>
+                    
+                    <p>Nuestra historia comenzó cuando estos dos hermanos apasionados por la tecnología y el diseño se unieron con un objetivo común: combinar su creatividad con su compromiso con el medio ambiente. Observaron la necesidad de alternativas sostenibles en la industria del juguete y decidieron actuar.</p>
+                    
+                    <p>Utilizamos exclusivamente filamentos biodegradables y de origen sostenible, como PLA derivado de almidón de maíz, reduciendo significativamente nuestra huella de carbono. Cada juguete es diseñado con cuidado, impreso con precisión y terminado a mano, garantizando productos únicos y duraderos.</p>
+                    
+                    <p>Como emprendedores de Chillán, nos enorgullece ser parte de la vibrante comunidad de Ñuble, contribuyendo al desarrollo local mientras promovemos valores de sostenibilidad y creatividad en las nuevas generaciones.</p>
+                    
+                    <div class="about-features">
+                        <div class="feature">
+                            <i class="fas fa-recycle"></i>
+                            <span>Materiales Ecológicos</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Hecho en Chillán</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-child"></i>
+                            <span>Juguetes Educativos</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-users"></i>
+                            <span>Emprendimiento Familiar</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual">
+                    <div class="visual-container">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-seedling"></i>
+                            <h4>Sostenible</h4>
+                        </div>
+                        <div class="floating-card card-2">
+                            <i class="fas fa-brain"></i>
+                            <h4>Innovador</h4>
+                        </div>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-heart"></i>
+                            <h4>Hecho con Amor</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Productos -->
+    <section class="products" id="productos">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Nuestra Colección</p>
+                <h2 class="section-title">Productos Destacados</h2>
+                <p class="section-description">Descubre nuestros juguetes ecológicos impresos en 3D, inspirados en diseños de FlexiFactory.</p>
+            </div>
+            
+            <div class="products-grid">
+                <!-- Producto 1 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Dragon Flexi">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Dragón Articulado</h3>
+                        <p class="product-description">Impresionante dragón con cuerpo flexible y articulado, perfecto para juegos de fantasía. Impreso con filamento PLA biodegradable.</p>
+                        <div class="product-price">$18.500</div>
+                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20el%20Dragón%20Articulado" target="_blank" class="btn btn-primary">
+                            <span>Consultar por WhatsApp</span>
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Producto 2 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Robot Flexi">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Robot Flexi</h3>
+                        <p class="product-description">Robot articulado con extremidades flexibles, ideal para desarrollar la imaginación. Fabricado con materiales 100% ecológicos.</p>
+                        <div class="product-price">$15.000</div>
+                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20el%20Robot%20Flexi" target="_blank" class="btn btn-primary">
+                            <span>Consultar por WhatsApp</span>
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Producto 3 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="https://images.unsplash.com/photo-1596870239757-1a5db1efa261?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Dinosaurio Articulado">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">Dinosaurio Articulado</h3>
+                        <p class="product-description">Tyrannosaurus Rex con mandíbula móvil y articulaciones flexibles. Juguete educativo sobre prehistoria.</p>
+                        <div class="product-price">$16.800</div>
+                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20el%20Dinosaurio%20Articulado" target="_blank" class="btn btn-primary">
+                            <span>Consultar por WhatsApp</span>
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="products-cta">
+                <p>¿No encuentras lo que buscas? Contáctanos y creamos el juguete perfecto para ti.</p>
+                <a href="https://wa.me/56962485838" target="_blank" class="btn btn-secondary">
+                    <span>Personalizar Juguete</span>
+                    <i class="fas fa-magic"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Servicios -->
+    <section class="services" id="servicios">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Nuestros Servicios</p>
+                <h2 class="section-title">Más que solo juguetes</h2>
+                <p class="section-description">Ofrecemos una variedad de servicios relacionados con la impresión 3D y diseño.</p>
+            </div>
+            
+            <div class="services-grid">
+                <!-- Servicio 1 -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h3 class="service-title">Diseño Personalizado</h3>
+                    <p class="service-description">Creamos diseños únicos basados en tus ideas o necesidades específicas.</p>
+                    <a href="https://wa.me/56962485838" target="_blank" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <!-- Servicio 2 -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3 class="service-title">Personalización</h3>
+                    <p class="service-description">Añadimos nombres, colores o detalles especiales a nuestros productos.</p>
+                    <a href="https://wa.me/56962485838" target="_blank" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
+                </div>
+                
+                <!-- Servicio 3 -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <h3 class="service-title">Impresión por Encargo</h3>
+                    <p class="service-description">¿Tienes un diseño? Lo imprimimos por ti con materiales ecológicos.</p>
+                    <a href="https://wa.me/56962485838" target="_blank" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>¿Listo para llevar la magia de la impresión 3D ecológica a tu hogar?</h2>
+                <p>Únete a la revolución de los juguetes sostenibles hechos en Chillán.</p>
+                <div class="cta-buttons">
+                    <a href="https://wa.me/56962485838" target="_blank" class="btn btn-primary">
+                        <span>Contactar por WhatsApp</span>
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://www.instagram.com/tercerplanoestudio3d" target="_blank" class="btn btn-secondary">
+                        <span>Seguir en Instagram</span>
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <a href="#">
+                            <div class="logo-icon small">
+                                <div class="cube">
+                                    <div class="face front">3D</div>
+                                    <div class="face back"></div>
+                                    <div class="face top"></div>
+                                    <div class="face bottom"></div>
+                                    <div class="face left"></div>
+                                    <div class="face right"></div>
+                                </div>
+                            </div>
+                            <div class="logo-text">
+                                <span class="logo-main">TERCER PLANO</span>
+                                <span class="logo-sub">ESTUDIO 3D</span>
+                            </div>
+                        </a>
+                    </div>
+                    <p class="footer-description">Juguetería ecológica especializada en impresión 3D con materiales sostenibles. Hecho en Chillán, Ñuble, Chile.</p>
+                    <p class="founders">Fundado por Paulette Plaza y Jesús Rojas</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-map-marker-alt"></i> Chillán, Ñuble, Chile</p>
+                        <p><i class="fas fa-envelope"></i> hola@tercerplanoestudio3d.cl</p>
+                        <p><i class="fas fa-phone"></i> +56 9 6248 5838</p>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Síguenos</h3>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/tercerplanoestudio3d" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/56962485838" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Tercer Plano Estudio 3D. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
