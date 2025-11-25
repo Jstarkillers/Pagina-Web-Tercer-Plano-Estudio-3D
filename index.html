@@ -5,17 +5,1693 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tercer Plano - Juguetería Ecológica 3D</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* RESET Y ESTILOS BASE */
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --primary-light: #66ffb8;
+            --secondary: #6c63ff;
+            --secondary-dark: #5a52d5;
+            --secondary-light: #9d97ff;
+            --dark: #0a0a16;
+            --dark-light: #1a1a2e;
+            --dark-lighter: #2a2a4e;
+            --text: #f0f0ff;
+            --text-light: #b8b8d0;
+            --accent: #ff2e63;
+            --accent-dark: #d92552;
+            --accent-light: #ff7a9c;
+            --glow: 0 0 10px rgba(0, 255, 136, 0.5);
+            --glow-strong: 0 0 20px rgba(0, 255, 136, 0.7);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--dark);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* FONDO CON IMPRESORA 3D ANIMADA */
+        .printer-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, var(--dark) 0%, #0d0d1a 100%);
+            overflow: hidden;
+        }
+
+        .printer-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 300px;
+            opacity: 0.1;
+            animation: float-printer 20s infinite ease-in-out;
+        }
+
+        .printer-machine {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .printer-base {
+            position: absolute;
+            bottom: 0;
+            width: 250px;
+            height: 30px;
+            background: linear-gradient(to top, #333, #555);
+            border-radius: 10px 10px 0 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .printer-frame {
+            position: absolute;
+            bottom: 30px;
+            width: 280px;
+            height: 150px;
+            background: rgba(60, 60, 80, 0.7);
+            border: 2px solid rgba(100, 100, 120, 0.5);
+            border-radius: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .printer-head {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 40px;
+            background: linear-gradient(to bottom, #444, #666);
+            border-radius: 10px;
+            animation: printHeadMove 6s infinite;
+        }
+
+        .nozzle {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 0 0 5px 5px;
+        }
+
+        .print-bed {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 100px;
+            background: rgba(40, 40, 50, 0.8);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 5px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .printed-object {
+            width: 80px;
+            height: 0;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            transition: height 3s ease;
+            border-radius: 5px 5px 0 0;
+            animation: buildObject 8s infinite;
+        }
+
+        @keyframes buildObject {
+            0% { height: 0; }
+            50% { height: 70px; }
+            100% { height: 0; }
+        }
+
+        @keyframes printHeadMove {
+            0%, 100% { left: 30%; }
+            50% { left: 70%; }
+        }
+
+        @keyframes float-printer {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+            25% { transform: translate(-40%, -45%) rotate(5deg) scale(1.1); }
+            50% { transform: translate(-60%, -55%) rotate(-5deg) scale(0.9); }
+            75% { transform: translate(-45%, -50%) rotate(3deg) scale(1.05); }
+        }
+
+        /* Efectos de partículas */
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite linear;
+            opacity: 0;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* BARRA DE UBICACIONES */
+        .location-bar {
+            background: rgba(10, 10, 22, 0.9);
+            color: var(--text-light);
+            padding: 0.5rem 0;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .location-bar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .locations {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .locations span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .locations i {
+            color: var(--primary);
+        }
+
+        /* HEADER PRINCIPAL */
+        .header {
+            background-color: rgba(10, 10, 22, 0.8);
+            color: var(--text);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            padding: 0.5rem 2rem;
+            background-color: rgba(10, 10, 22, 0.95);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* LOGO */
+        .logo a {
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            perspective: 1000px;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 10s infinite linear;
+        }
+
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background: rgba(108, 99, 255, 0.2);
+            border: 1px solid rgba(108, 99, 255, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .front {
+            transform: translateZ(25px);
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+        }
+
+        .back {
+            transform: rotateY(180deg) translateZ(25px);
+            background: rgba(0, 255, 136, 0.2);
+        }
+
+        .top {
+            transform: rotateX(90deg) translateZ(25px);
+            background: rgba(255, 46, 99, 0.2);
+        }
+
+        .bottom {
+            transform: rotateX(-90deg) translateZ(25px);
+            background: rgba(108, 99, 255, 0.2);
+        }
+
+        .left {
+            transform: rotateY(-90deg) translateZ(25px);
+            background: rgba(0, 255, 136, 0.2);
+        }
+
+        .right {
+            transform: rotateY(90deg) translateZ(25px);
+            background: rgba(255, 46, 99, 0.2);
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotateX(0) rotateY(0);
+            }
+            100% {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-main {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text);
+        }
+
+        .logo-sub {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        .logo-icon.small {
+            width: 40px;
+            height: 40px;
+        }
+
+        .logo-icon.small .face {
+            font-size: 0.8rem;
+        }
+
+        /* NAVEGACIÓN */
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* BOTONES DE AUTENTICACIÓN */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-auth {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .btn-auth:hover {
+            background: rgba(108, 99, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-auth.btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            border: none;
+        }
+
+        .btn-auth.btn-primary:hover {
+            box-shadow: var(--glow);
+            transform: translateY(-2px);
+        }
+
+        #user-welcome {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* BOTÓN MENÚ HAMBURGUESA */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .menu-toggle span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: var(--text);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* MENÚ MÓVIL */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background-color: rgba(10, 10, 22, 0.95);
+            padding: 5rem 2rem 2rem;
+            transition: right 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .mobile-nav-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .mobile-nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            display: block;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .mobile-nav-link:hover {
+            color: var(--primary);
+        }
+
+        .mobile-nav-link::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: height 0.3s ease;
+        }
+
+        .mobile-nav-link:hover::before {
+            height: 20px;
+        }
+
+        .mobile-auth {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            z-index: 998;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* MODALES */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--dark-light);
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--text);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(10, 10, 22, 0.5);
+            color: var(--text);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+
+        .form-group.error input {
+            border-color: var(--accent);
+        }
+
+        .error-message {
+            color: var(--accent);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--text);
+        }
+
+        /* SECCIÓN HERO */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-content {
+            flex: 1;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .title-line {
+            display: block;
+        }
+
+        .title-line.accent {
+            color: var(--primary);
+            text-shadow: var(--glow-strong);
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 500px;
+        }
+
+        .hero-illustration {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 500px;
+        }
+
+        .printer-3d {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 200px;
+        }
+
+        .printer-body {
+            position: absolute;
+            bottom: 0;
+            width: 250px;
+            height: 150px;
+            background: linear-gradient(to top, #333, #555);
+            border-radius: 10px 10px 0 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .printer-glass {
+            position: absolute;
+            bottom: 30px;
+            width: 220px;
+            height: 120px;
+            background: rgba(100, 200, 255, 0.1);
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            border-radius: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            overflow: hidden;
+        }
+
+        .printing-object {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 0;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 5px 5px 0 0;
+            animation: printing 6s infinite ease-in-out;
+        }
+
+        @keyframes printing {
+            0% { height: 0; }
+            50% { height: 100px; }
+            100% { height: 0; }
+        }
+
+        .printer-nozzle {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 30px;
+            background: var(--accent);
+            border-radius: 10px 10px 0 0;
+            animation: nozzleMove 4s infinite ease-in-out;
+        }
+
+        @keyframes nozzleMove {
+            0%, 100% { left: 30%; }
+            50% { left: 70%; }
+        }
+
+        .filament-spool {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+            animation: rotateSpool 10s infinite linear;
+        }
+
+        @keyframes rotateSpool {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+        }
+
+        /* SECCIÓN VALORES */
+        .values {
+            padding: 6rem 2rem;
+            background: rgba(10, 10, 22, 0.5);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-subtitle {
+            color: var(--primary);
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .value-card {
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .value-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, transparent 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .value-card:hover::before {
+            opacity: 1;
+        }
+
+        .value-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .value-card:hover .value-icon {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: rgba(0, 255, 136, 0.5);
+            transform: scale(1.1);
+        }
+
+        .value-icon i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .value-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .value-description {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .value-features {
+            list-style: none;
+            text-align: left;
+            margin-top: 1.5rem;
+        }
+
+        .value-features li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+        }
+
+        .value-features i {
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        /* SECCIÓN QUIÉNES SOMOS */
+        .about {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        .about-text strong {
+            color: var(--primary);
+        }
+
+        .about-features {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-light);
+        }
+
+        .feature i {
+            color: var(--primary);
+        }
+
+        .about-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .visual-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .floating-card {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(108, 99, 255, 0.1);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            animation: float-card 10s infinite ease-in-out;
+        }
+
+        .floating-card i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .floating-card h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .card-1 {
+            top: 0;
+            left: 0;
+            animation-delay: 0s;
+        }
+
+        .card-2 {
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            animation-delay: -3s;
+        }
+
+        .card-3 {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-delay: -6s;
+        }
+
+        @keyframes float-card {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-10px) rotate(3deg);
+            }
+            66% {
+                transform: translateY(5px) rotate(-3deg);
+            }
+        }
+
+        /* SECCIÓN PRODUCTOS */
+        .products {
+            padding: 6rem 2rem;
+            background: rgba(10, 10, 22, 0.5);
+        }
+
+        .wholesale-products {
+            background: rgba(26, 26, 46, 0.7);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            position: relative;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .product-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .product-description {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .product-min-quantity {
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .product-card .btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* SECCIÓN SERVICIOS */
+        .services {
+            padding: 6rem 2rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, transparent 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .service-card:hover .service-icon {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: rgba(0, 255, 136, 0.5);
+            transform: scale(1.1);
+        }
+
+        .service-icon i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .service-description {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .service-link i {
+            margin-left: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .service-link:hover {
+            color: var(--text);
+        }
+
+        .service-link:hover i {
+            transform: translateX(5px);
+        }
+
+        /* PANEL DE ADMINISTRACIÓN */
+        .admin-panel {
+            padding: 6rem 2rem;
+            background: rgba(10, 10, 22, 0.8);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .admin-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .admin-product-card {
+            background: rgba(26, 26, 46, 0.7);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .admin-product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .admin-product-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .admin-product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .admin-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+        }
+
+        .btn-edit {
+            background: rgba(108, 99, 255, 0.2);
+            color: var(--text);
+            border: 1px solid rgba(108, 99, 255, 0.5);
+        }
+
+        .btn-edit:hover {
+            background: rgba(108, 99, 255, 0.4);
+        }
+
+        .btn-delete {
+            background: rgba(255, 46, 99, 0.2);
+            color: var(--text);
+            border: 1px solid rgba(255, 46, 99, 0.5);
+        }
+
+        .btn-delete:hover {
+            background: rgba(255, 46, 99, 0.4);
+        }
+
+        .admin-product-details {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* SECCIÓN CTA */
+        .cta-section {
+            padding: 6rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(0, 255, 136, 0.1) 100%);
+        }
+
+        .cta-content h2 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 4rem 2rem 2rem;
+            background: rgba(10, 10, 22, 0.8);
+            border-top: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .footer-description {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-top: 1rem;
+        }
+
+        .founders {
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .contact-info i {
+            color: var(--primary);
+            width: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--text);
+            text-decoration: none;
+            transition: var(--transition);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            color: var(--dark);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(108, 99, 255, 0.2);
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* NOTIFICACIONES */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+            backdrop-filter: blur(10px);
+        }
+
+        .notification.success {
+            background: rgba(0, 204, 106, 0.9);
+            border: 1px solid rgba(0, 255, 136, 0.5);
+        }
+
+        .notification.error {
+            background: rgba(255, 46, 99, 0.9);
+            border: 1px solid rgba(255, 46, 99, 0.5);
+        }
+
+        .notification.info {
+            background: rgba(108, 99, 255, 0.9);
+            border: 1px solid rgba(108, 99, 255, 0.5);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* LOADING STATES */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            border-right-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* MEDIA QUERIES */
+        @media (max-width: 860px) {
+            .nav-list, .auth-section {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 6rem;
+            }
+
+            .hero-visual {
+                margin-top: 3rem;
+                height: 300px;
+            }
+
+            .hero-title {
+                font-size: 2.8rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-buttons .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .location-bar {
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .logo-main {
+                font-size: 1rem;
+            }
+
+            .logo-sub {
+                font-size: 0.6rem;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+
+            .services, .products {
+                padding: 4rem 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .service-card, .product-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .cta-content h2 {
+                font-size: 2rem;
+            }
+
+            .admin-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Fondo futurista -->
-    <div class="futuristic-bg">
-        <div class="grid-lines"></div>
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-            <div class="shape shape-4"></div>
+    <!-- Fondo con impresora 3D animada -->
+    <div class="printer-bg">
+        <div class="printer-container">
+            <div class="printer-machine">
+                <div class="printer-base"></div>
+                <div class="printer-frame"></div>
+                <div class="printer-head">
+                    <div class="nozzle"></div>
+                </div>
+                <div class="print-bed">
+                    <div class="printed-object"></div>
+                </div>
+            </div>
+        </div>
+        <div class="particles-container" id="particles-container"></div>
+    </div>
+
+    <!-- Barra de ubicaciones -->
+    <div class="location-bar">
+        <div class="container">
+            <div class="locations">
+                <span><i class="fas fa-industry"></i> Fábrica: Av. Libertad 845, Chillán</span>
+                <span><i class="fas fa-shopping-mall"></i> Mall Arauco Chillán: Av. Collín #1090</span>
+                <span><i class="fas fa-store"></i> Outlet Vivo Chillán: Avenida Vicente Méndez 1541</span>
+            </div>
         </div>
     </div>
 
@@ -44,11 +1720,21 @@
             <nav class="nav">
                 <ul class="nav-list">
                     <li class="nav-item"><a href="#inicio" class="nav-link">Inicio</a></li>
+                    <li class="nav-item"><a href="#valores" class="nav-link">Nuestros Valores</a></li>
                     <li class="nav-item"><a href="#quienes-somos" class="nav-link">Quiénes Somos</a></li>
-                    <li class="nav-item"><a href="#productos" class="nav-link">Productos</a></li>
+                    <li class="nav-item"><a href="#catalogo-minorista" class="nav-link">Catálogo Minorista</a></li>
+                    <li class="nav-item"><a href="#catalogo-mayorista" class="nav-link">Catálogo Mayorista</a></li>
                     <li class="nav-item"><a href="#servicios" class="nav-link">Servicios</a></li>
                     <li class="nav-item"><a href="#contacto" class="nav-link">Contacto</a></li>
+                    <li class="nav-item" id="admin-link" style="display:none;"><a href="#admin-panel" class="nav-link">Panel Admin</a></li>
                 </ul>
+
+                <div class="auth-section">
+                    <button class="btn-auth" id="login-btn">Iniciar Sesión</button>
+                    <button class="btn-auth btn-primary" id="register-btn">Registrarse</button>
+                    <button class="btn-auth" id="logout-btn" style="display:none;">Cerrar Sesión</button>
+                    <span id="user-welcome" style="display:none;"></span>
+                </div>
 
                 <button class="menu-toggle" id="menu-toggle">
                     <span></span>
@@ -64,14 +1750,55 @@
         <button class="close-menu" id="close-menu">&times;</button>
         <ul class="mobile-nav-list">
             <li class="mobile-nav-item"><a href="#inicio" class="mobile-nav-link">Inicio</a></li>
+            <li class="mobile-nav-item"><a href="#valores" class="mobile-nav-link">Nuestros Valores</a></li>
             <li class="mobile-nav-item"><a href="#quienes-somos" class="mobile-nav-link">Quiénes Somos</a></li>
-            <li class="mobile-nav-item"><a href="#productos" class="mobile-nav-link">Productos</a></li>
+            <li class="mobile-nav-item"><a href="#catalogo-minorista" class="mobile-nav-link">Catálogo Minorista</a></li>
+            <li class="mobile-nav-item"><a href="#catalogo-mayorista" class="mobile-nav-link">Catálogo Mayorista</a></li>
             <li class="mobile-nav-item"><a href="#servicios" class="mobile-nav-link">Servicios</a></li>
             <li class="mobile-nav-item"><a href="#contacto" class="mobile-nav-link">Contacto</a></li>
+            <li class="mobile-nav-item" id="mobile-admin-link" style="display:none;"><a href="#admin-panel" class="mobile-nav-link">Panel Admin</a></li>
         </ul>
+        <div class="mobile-auth">
+            <button class="btn-auth" id="mobile-login-btn">Iniciar Sesión</button>
+            <button class="btn-auth btn-primary" id="mobile-register-btn">Registrarse</button>
+            <button class="btn-auth" id="mobile-logout-btn" style="display:none;">Cerrar Sesión</button>
+        </div>
     </div>
 
     <div class="overlay" id="overlay"></div>
+
+    <!-- Modales de Login y Registro -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-login">&times;</span>
+            <h2>Iniciar Sesión</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <input type="text" id="login-username" placeholder="Usuario" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="register-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-register">&times;</span>
+            <h2>Registrarse</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <input type="text" id="register-username" placeholder="Usuario" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="register-password" placeholder="Contraseña" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Sección Hero -->
     <section class="hero" id="inicio">
@@ -81,28 +1808,89 @@
                 <span class="title-line accent">Ecológica</span>
                 <span class="title-line">en Ñuble</span>
             </h1>
-            <p class="hero-description">Creando el futuro del juego sostenible con tecnología de impresión 3D avanzada y materiales ecológicos.</p>
+            <p class="hero-description">Creando el futuro del juego sostenible con tecnología de impresión 3D avanzada y materiales ecológicos. Diseñamos y fabricamos juguetes únicos que inspiran creatividad mientras cuidamos nuestro planeta.</p>
             <div class="hero-cta">
-                <a href="#productos" class="btn btn-primary">
-                    <span>Ver Productos</span>
+                <a href="#catalogo-minorista" class="btn btn-primary">
+                    <span>Ver Catálogo</span>
                     <i class="fas fa-chevron-right"></i>
                 </a>
                 <a href="https://wa.me/56962485838" target="_blank" class="btn btn-secondary">
                     <span>Contactar por WhatsApp</span>
                     <i class="fab fa-whatsapp"></i>
                 </a>
+                <a href="#valores" class="btn btn-secondary">
+                    <span>Conoce Nuestros Valores</span>
+                    <i class="fas fa-leaf"></i>
+                </a>
             </div>
         </div>
         <div class="hero-visual">
-            <div class="floating-objects">
-                <div class="object obj-1">
-                    <i class="fas fa-cube"></i>
+            <div class="hero-illustration">
+                <div class="printer-3d">
+                    <div class="printer-body"></div>
+                    <div class="printer-glass">
+                        <div class="printing-object"></div>
+                    </div>
+                    <div class="printer-nozzle"></div>
+                    <div class="filament-spool"></div>
                 </div>
-                <div class="object obj-2">
-                    <i class="fas fa-robot"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Valores -->
+    <section class="values" id="valores">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Nuestra Filosofía</p>
+                <h2 class="section-title">Valores que Nos Definen</h2>
+                <p class="section-description">En Tercer Plano, cada creación refleja nuestro compromiso con la innovación, la sostenibilidad y el amor por lo que hacemos.</p>
+            </div>
+            
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3 class="value-title">Sostenible</h3>
+                    <p class="value-description">Nos comprometemos con el medio ambiente utilizando materiales biodegradables y procesos de fabricación responsables.</p>
+                    <ul class="value-features">
+                        <li><i class="fas fa-check"></i> Filamentos PLA biodegradables</li>
+                        <li><i class="fas fa-check"></i> Reducción de residuos mediante impresión 3D</li>
+                        <li><i class="fas fa-check"></i> Empaques ecológicos y reutilizables</li>
+                        <li><i class="fas fa-check"></i> Consumo energético optimizado</li>
+                        <li><i class="fas fa-check"></i> Economía circular en nuestros procesos</li>
+                    </ul>
                 </div>
-                <div class="object obj-3">
-                    <i class="fas fa-tree"></i>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="value-title">Innovador</h3>
+                    <p class="value-description">Combinamos tecnología de vanguardia con diseño creativo para ofrecer productos únicos y educativos.</p>
+                    <ul class="value-features">
+                        <li><i class="fas fa-check"></i> Diseños originales y patentados</li>
+                        <li><i class="fas fa-check"></i> Tecnología de impresión 3D de última generación</li>
+                        <li><i class="fas fa-check"></i> Juguetes que fomentan el aprendizaje STEM</li>
+                        <li><i class="fas fa-check"></i> Personalización avanzada de productos</li>
+                        <li><i class="fas fa-check"></i> Investigación continua en nuevos materiales</li>
+                    </ul>
+                </div>
+                
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="value-title">Hecho con Amor</h3>
+                    <p class="value-description">Cada producto es creado con dedicación y atención al detalle, reflejando nuestra pasión por el diseño y la artesanía.</p>
+                    <ul class="value-features">
+                        <li><i class="fas fa-check"></i> Proceso artesanal en cada etapa</li>
+                        <li><i class="fas fa-check"></i> Atención personalizada a cada cliente</li>
+                        <li><i class="fas fa-check"></i> Control de calidad manual riguroso</li>
+                        <li><i class="fas fa-check"></i> Diseños inspirados en la comunidad local</li>
+                        <li><i class="fas fa-check"></i> Compromiso con la satisfacción del cliente</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -128,19 +1916,19 @@
                     <div class="about-features">
                         <div class="feature">
                             <i class="fas fa-recycle"></i>
-                            <span>Materiales Ecológicos</span>
+                            <span>Materiales 100% Ecológicos</span>
                         </div>
                         <div class="feature">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>Hecho en Chillán</span>
+                            <span>Hecho en Chillán con Orgullo</span>
                         </div>
                         <div class="feature">
                             <i class="fas fa-child"></i>
-                            <span>Juguetes Educativos</span>
+                            <span>Juguetes Educativos y Seguros</span>
                         </div>
                         <div class="feature">
                             <i class="fas fa-users"></i>
-                            <span>Emprendimiento Familiar</span>
+                            <span>Emprendimiento 100% Familiar</span>
                         </div>
                     </div>
                 </div>
@@ -164,70 +1952,45 @@
         </div>
     </section>
 
-    <!-- Sección Productos -->
-    <section class="products" id="productos">
+    <!-- Sección Catálogo Minorista -->
+    <section class="products" id="catalogo-minorista">
         <div class="container">
             <div class="section-header">
-                <p class="section-subtitle">Nuestra Colección</p>
-                <h2 class="section-title">Productos Destacados</h2>
-                <p class="section-description">Descubre nuestros juguetes ecológicos impresos en 3D, inspirados en diseños de FlexiFactory.</p>
+                <p class="section-subtitle">Para Todos</p>
+                <h2 class="section-title">Catálogo Minorista</h2>
+                <p class="section-description">Descubre nuestros juguetes ecológicos impresos en 3D, disponibles para compra individual. Cada pieza es única y fabricada con materiales sostenibles.</p>
             </div>
             
-            <div class="products-grid">
-                <!-- Producto 1 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Dragon Flexi">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Dragón Articulado</h3>
-                        <p class="product-description">Impresionante dragón con cuerpo flexible y articulado, perfecto para juegos de fantasía. Impreso con filamento PLA biodegradable.</p>
-                        <div class="product-price">$18.500</div>
-                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20el%20Dragón%20Articulado" target="_blank" class="btn btn-primary">
-                            <span>Consultar por WhatsApp</span>
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Producto 2 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Robot Flexi">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Robot Flexi</h3>
-                        <p class="product-description">Robot articulado con extremidades flexibles, ideal para desarrollar la imaginación. Fabricado con materiales 100% ecológicos.</p>
-                        <div class="product-price">$15.000</div>
-                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20el%20Robot%20Flexi" target="_blank" class="btn btn-primary">
-                            <span>Consultar por WhatsApp</span>
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Producto 3 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1596870239757-1a5db1efa261?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Dinosaurio Articulado">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">Dinosaurio Articulado</h3>
-                        <p class="product-description">Tyrannosaurus Rex con mandíbula móvil y articulaciones flexibles. Juguete educativo sobre prehistoria.</p>
-                        <div class="product-price">$16.800</div>
-                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20el%20Dinosaurio%20Articulado" target="_blank" class="btn btn-primary">
-                            <span>Consultar por WhatsApp</span>
-                            <i class="fab fa-whatsapp"></i>
-                        </a>
-                    </div>
-                </div>
+            <div class="products-grid" id="minorista-grid">
+                <!-- Los productos minoristas se cargarán dinámicamente -->
             </div>
             
-            <div class="products-cta">
-                <p>¿No encuentras lo que buscas? Contáctanos y creamos el juguete perfecto para ti.</p>
-                <a href="https://wa.me/56962485838" target="_blank" class="btn btn-secondary">
-                    <span>Personalizar Juguete</span>
+            <div class="cta-buttons" style="justify-content: center;">
+                <a href="https://wa.me/56962485838" target="_blank" class="btn btn-primary">
+                    <span>Personaliza Tu Juguete</span>
                     <i class="fas fa-magic"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Catálogo Mayorista -->
+    <section class="products wholesale-products" id="catalogo-mayorista">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Para Negocios</p>
+                <h2 class="section-title">Catálogo Mayorista</h2>
+                <p class="section-description">Precios especiales para compras al por mayor. Ideal para tiendas, distribuidores y eventos. ¡Contáctanos para acceder a descuentos exclusivos!</p>
+            </div>
+            
+            <div class="products-grid" id="mayorista-grid">
+                <!-- Los productos mayoristas se cargarán dinámicamente -->
+            </div>
+            
+            <div class="cta-buttons" style="justify-content: center;">
+                <a href="https://wa.me/56962485838" target="_blank" class="btn btn-primary">
+                    <span>Solicitar Catálogo Mayorista Completo</span>
+                    <i class="fas fa-file-alt"></i>
                 </a>
             </div>
         </div>
@@ -239,7 +2002,7 @@
             <div class="section-header">
                 <p class="section-subtitle">Nuestros Servicios</p>
                 <h2 class="section-title">Más que solo juguetes</h2>
-                <p class="section-description">Ofrecemos una variedad de servicios relacionados con la impresión 3D y diseño.</p>
+                <p class="section-description">Ofrecemos una variedad de servicios relacionados con la impresión 3D y diseño para satisfacer todas tus necesidades creativas.</p>
             </div>
             
             <div class="services-grid">
@@ -249,7 +2012,7 @@
                         <i class="fas fa-puzzle-piece"></i>
                     </div>
                     <h3 class="service-title">Diseño Personalizado</h3>
-                    <p class="service-description">Creamos diseños únicos basados en tus ideas o necesidades específicas.</p>
+                    <p class="service-description">Creamos diseños únicos basados en tus ideas o necesidades específicas. Desde personajes personalizados hasta soluciones innovadoras.</p>
                     <a href="https://wa.me/56962485838" target="_blank" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
                 </div>
                 
@@ -259,7 +2022,7 @@
                         <i class="fas fa-paint-brush"></i>
                     </div>
                     <h3 class="service-title">Personalización</h3>
-                    <p class="service-description">Añadimos nombres, colores o detalles especiales a nuestros productos.</p>
+                    <p class="service-description">Añadimos nombres, colores o detalles especiales a nuestros productos. Ideal para regalos, eventos especiales o identidad corporativa.</p>
                     <a href="https://wa.me/56962485838" target="_blank" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
                 </div>
                 
@@ -269,9 +2032,32 @@
                         <i class="fas fa-cubes"></i>
                     </div>
                     <h3 class="service-title">Impresión por Encargo</h3>
-                    <p class="service-description">¿Tienes un diseño? Lo imprimimos por ti con materiales ecológicos.</p>
+                    <p class="service-description">¿Tienes un diseño? Lo imprimimos por ti con materiales ecológicos. Servicio ideal para creadores, diseñadores y emprendedores.</p>
                     <a href="https://wa.me/56962485838" target="_blank" class="service-link">Consultar <i class="fas fa-arrow-right"></i></a>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Panel de Administración -->
+    <section class="admin-panel" id="admin-panel" style="display:none;">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">Panel de Control</p>
+                <h2 class="section-title">Administración</h2>
+            </div>
+            
+            <div class="admin-actions">
+                <button class="btn btn-primary" id="add-product-btn">
+                    <i class="fas fa-plus"></i> Agregar Producto
+                </button>
+                <button class="btn btn-secondary" id="refresh-products-btn">
+                    <i class="fas fa-sync"></i> Actualizar Lista
+                </button>
+            </div>
+            
+            <div class="admin-products-grid" id="admin-products-grid">
+                <!-- Los productos para administración se cargarán dinámicamente -->
             </div>
         </div>
     </section>
@@ -281,7 +2067,7 @@
         <div class="container">
             <div class="cta-content">
                 <h2>¿Listo para llevar la magia de la impresión 3D ecológica a tu hogar?</h2>
-                <p>Únete a la revolución de los juguetes sostenibles hechos en Chillán.</p>
+                <p>Únete a la revolución de los juguetes sostenibles hechos en Chillán. Cada compra apoya el desarrollo local y el cuidado de nuestro planeta.</p>
                 <div class="cta-buttons">
                     <a href="https://wa.me/56962485838" target="_blank" class="btn btn-primary">
                         <span>Contactar por WhatsApp</span>
@@ -290,6 +2076,10 @@
                     <a href="https://www.instagram.com/tercerplanoestudio3d" target="_blank" class="btn btn-secondary">
                         <span>Seguir en Instagram</span>
                         <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#catalogo-minorista" class="btn btn-secondary">
+                        <span>Ver Catálogo Completo</span>
+                        <i class="fas fa-box-open"></i>
                     </a>
                 </div>
             </div>
@@ -319,33 +2109,730 @@
                             </div>
                         </a>
                     </div>
-                    <p class="footer-description">Juguetería ecológica especializada en impresión 3D con materiales sostenibles. Hecho en Chillán, Ñuble, Chile.</p>
+                    <p class="footer-description">Juguetería ecológica especializada en impresión 3D con materiales sostenibles. Combinamos tecnología, creatividad y conciencia ambiental para crear juguetes únicos que inspiran y educan.</p>
                     <p class="founders">Fundado por Paulette Plaza y Jesús Rojas</p>
                 </div>
                 <div class="footer-section">
                     <h3>Contacto</h3>
                     <div class="contact-info">
                         <p><i class="fas fa-map-marker-alt"></i> Chillán, Ñuble, Chile</p>
-                        <p><i class="fas fa-envelope"></i> hola@tercerplanoestudio3d.cl</p>
                         <p><i class="fas fa-phone"></i> +56 9 6248 5838</p>
+                        <p><i class="fas fa-envelope"></i> info@tercerplanoestudio3d.cl</p>
+                        <p><i class="fas fa-clock"></i> Lunes a Sábado: 10:00 - 19:00</p>
                     </div>
                 </div>
                 <div class="footer-section">
                     <h3>Síguenos</h3>
                     <div class="social-links">
-                        <a href="https://www.instagram.com/tercerplanoestudio3d" target="_blank"><i class="fab fa-instagram"></i></a>
-                        <a href="https://wa.me/56962485838" target="_blank"><i class="fab fa-whatsapp"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/tercerplanoestudio3d" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/56962485838" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.tiktok.com/@tercer.plano.estu" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.facebook.com/tercerplanoestudio3d" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    </div>
+                    
+                    <h3 style="margin-top: 1.5rem;">Nuestras Ubicaciones</h3>
+                    <div class="contact-info">
+                        <p><i class="fas fa-industry"></i> Fábrica: Av. Libertad 845</p>
+                        <p><i class="fas fa-shopping-mall"></i> Mall Arauco: Av. Collín #1090</p>
+                        <p><i class="fas fa-store"></i> Outlet Vivo: Av. Vicente Méndez 1541</p>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2023 Tercer Plano Estudio 3D. Todos los derechos reservados.</p>
+                <p>&copy; 2023 Tercer Plano Estudio 3D. Todos los derechos reservados. | Hecho con ❤️ en Chillán, Ñuble</p>
             </div>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // =============================================
+            // CONFIGURACIÓN INICIAL Y VARIABLES GLOBALES
+            // =============================================
+            
+            // Super usuarios predefinidos
+            const SUPER_USERS = {
+                'admin': { password: 'Admin123!', isSuper: true },
+                'paulette': { password: 'Paulette123!', isSuper: true }
+            };
+            
+            // Estado de la aplicación
+            let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+            let products = JSON.parse(localStorage.getItem('products')) || [];
+            let wholesaleProducts = JSON.parse(localStorage.getItem('wholesaleProducts')) || [];
+            
+            // Elementos del DOM
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileNav = document.getElementById('mobile-nav');
+            const closeMenu = document.getElementById('close-menu');
+            const overlay = document.getElementById('overlay');
+            
+            // Modales
+            const loginModal = document.getElementById('login-modal');
+            const registerModal = document.getElementById('register-modal');
+            const loginBtn = document.getElementById('login-btn');
+            const registerBtn = document.getElementById('register-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const closeLogin = document.getElementById('close-login');
+            const closeRegister = document.getElementById('close-register');
+            
+            // Enlaces para usuarios registrados
+            const adminLink = document.getElementById('admin-link');
+            const mobileAdminLink = document.getElementById('mobile-admin-link');
+            
+            // Secciones
+            const adminSection = document.getElementById('admin-panel');
+            
+            // Botones de administración
+            const addProductBtn = document.getElementById('add-product-btn');
+            const refreshProductsBtn = document.getElementById('refresh-products-btn');
+            
+            // Grids de productos
+            const minoristaGrid = document.getElementById('minorista-grid');
+            const mayoristaGrid = document.getElementById('mayorista-grid');
+            const adminGrid = document.getElementById('admin-products-grid');
+            
+            // Elementos de bienvenida
+            const userWelcome = document.getElementById('user-welcome');
+            const mobileLoginBtn = document.getElementById('mobile-login-btn');
+            const mobileRegisterBtn = document.getElementById('mobile-register-btn');
+            const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+            
+            // =============================================
+            // INICIALIZACIÓN
+            // =============================================
+            
+            function init() {
+                // Cargar productos si no existen
+                if (products.length === 0) {
+                    loadInitialProducts();
+                }
+                
+                // Configurar eventos
+                setupEventListeners();
+                
+                // Actualizar UI según estado de autenticación
+                updateUI();
+                
+                // Renderizar productos
+                renderProducts();
+                
+                // Iniciar efectos visuales
+                initVisualEffects();
+                
+                // Configurar scroll
+                setupScrollEffects();
+            }
+            
+            // =============================================
+            // CONFIGURACIÓN DE EVENTOS
+            // =============================================
+            
+            function setupEventListeners() {
+                // Navegación móvil
+                if (menuToggle) menuToggle.addEventListener('click', openMobileMenu);
+                if (closeMenu) closeMenu.addEventListener('click', closeMobileMenu);
+                if (overlay) overlay.addEventListener('click', closeMobileMenu);
+                
+                // Cerrar menú al hacer clic en enlaces móviles
+                document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                    link.addEventListener('click', closeMobileMenu);
+                });
+                
+                // Autenticación
+                if (loginBtn) loginBtn.addEventListener('click', () => openModal(loginModal));
+                if (registerBtn) registerBtn.addEventListener('click', () => openModal(registerModal));
+                if (mobileLoginBtn) mobileLoginBtn.addEventListener('click', () => openModal(loginModal));
+                if (mobileRegisterBtn) mobileRegisterBtn.addEventListener('click', () => openModal(registerModal));
+                if (logoutBtn) logoutBtn.addEventListener('click', logout);
+                if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', logout);
+                
+                // Cerrar modales
+                if (closeLogin) closeLogin.addEventListener('click', () => closeModal(loginModal));
+                if (closeRegister) closeRegister.addEventListener('click', () => closeModal(registerModal));
+                
+                // Formularios
+                const loginForm = document.getElementById('login-form');
+                const registerForm = document.getElementById('register-form');
+                if (loginForm) loginForm.addEventListener('submit', handleLogin);
+                if (registerForm) registerForm.addEventListener('submit', handleRegister);
+                
+                // Administración
+                if (addProductBtn) {
+                    addProductBtn.addEventListener('click', showAddProductForm);
+                }
+                if (refreshProductsBtn) {
+                    refreshProductsBtn.addEventListener('click', refreshProducts);
+                }
+                
+                // Scroll suave para enlaces internos
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href');
+                        if (targetId === '#') return;
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 100,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                });
+            }
+            
+            function setupScrollEffects() {
+                // Header scroll effect
+                window.addEventListener('scroll', function() {
+                    const header = document.querySelector('.header');
+                    if (window.scrollY > 50) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                });
+            }
+            
+            // =============================================
+            // FUNCIONALIDADES DE INTERFAZ
+            // =============================================
+            
+            function openMobileMenu() {
+                if (!mobileNav || !overlay) return;
+                mobileNav.classList.add('active');
+                overlay.classList.add('active');
+                menuToggle.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenu() {
+                if (!mobileNav || !overlay) return;
+                mobileNav.classList.remove('active');
+                overlay.classList.remove('active');
+                menuToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            function openModal(modal) {
+                if (!modal) return;
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeModal(modal) {
+                if (!modal) return;
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            
+            function updateUI() {
+                if (currentUser) {
+                    // Usuario logueado
+                    if (loginBtn) loginBtn.style.display = 'none';
+                    if (registerBtn) registerBtn.style.display = 'none';
+                    if (logoutBtn) logoutBtn.style.display = 'block';
+                    if (mobileLoginBtn) mobileLoginBtn.style.display = 'none';
+                    if (mobileRegisterBtn) mobileRegisterBtn.style.display = 'none';
+                    if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'block';
+                    if (userWelcome) {
+                        userWelcome.textContent = `Hola, ${currentUser.username}`;
+                        userWelcome.style.display = 'inline';
+                    }
+                    
+                    // Si es super usuario, mostrar panel de administración
+                    if (currentUser.isSuper) {
+                        if (adminLink) adminLink.style.display = 'block';
+                        if (mobileAdminLink) mobileAdminLink.style.display = 'block';
+                        if (adminSection) adminSection.style.display = 'block';
+                    } else {
+                        if (adminLink) adminLink.style.display = 'none';
+                        if (mobileAdminLink) mobileAdminLink.style.display = 'none';
+                        if (adminSection) adminSection.style.display = 'none';
+                    }
+                } else {
+                    // Usuario no logueado
+                    if (loginBtn) loginBtn.style.display = 'block';
+                    if (registerBtn) registerBtn.style.display = 'block';
+                    if (logoutBtn) logoutBtn.style.display = 'none';
+                    if (mobileLoginBtn) mobileLoginBtn.style.display = 'block';
+                    if (mobileRegisterBtn) mobileRegisterBtn.style.display = 'block';
+                    if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'none';
+                    if (userWelcome) userWelcome.style.display = 'none';
+                    
+                    // Ocultar panel de administración
+                    if (adminLink) adminLink.style.display = 'none';
+                    if (mobileAdminLink) mobileAdminLink.style.display = 'none';
+                    if (adminSection) adminSection.style.display = 'none';
+                }
+                
+                // Renderizar productos según permisos
+                renderProducts();
+            }
+            
+            // =============================================
+            // SISTEMA DE AUTENTICACIÓN
+            // =============================================
+            
+            function handleLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+                
+                // Validaciones
+                if (!username || !password) {
+                    showNotification('Por favor, completa todos los campos', 'error');
+                    return;
+                }
+                
+                // Verificar si es un super usuario
+                if (SUPER_USERS[username] && SUPER_USERS[username].password === password) {
+                    currentUser = {
+                        username: username,
+                        isSuper: true
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateUI();
+                    closeModal(loginModal);
+                    showNotification('¡Bienvenido, administrador!', 'success');
+                    return;
+                }
+                
+                // Verificar usuarios normales
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.username === username && u.password === password);
+                
+                if (user) {
+                    currentUser = {
+                        username: username,
+                        isSuper: false
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    updateUI();
+                    closeModal(loginModal);
+                    showNotification('¡Sesión iniciada correctamente!', 'success');
+                } else {
+                    showNotification('Usuario o contraseña incorrectos', 'error');
+                }
+            }
+            
+            function handleRegister(e) {
+                e.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const password = document.getElementById('register-password').value;
+                
+                // Validaciones básicas
+                if (username.length < 3) {
+                    showNotification('El usuario debe tener al menos 3 caracteres', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
+                    return;
+                }
+                
+                // Verificar si el usuario ya existe
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                if (users.find(u => u.username === username)) {
+                    showNotification('El usuario ya existe', 'error');
+                    return;
+                }
+                
+                // Registrar nuevo usuario
+                users.push({ username, password });
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                // Iniciar sesión automáticamente
+                currentUser = {
+                    username: username,
+                    isSuper: false
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                updateUI();
+                closeModal(registerModal);
+                showNotification('¡Registro exitoso! Bienvenido/a', 'success');
+            }
+            
+            function logout() {
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                updateUI();
+                showNotification('Sesión cerrada correctamente', 'info');
+            }
+            
+            // =============================================
+            // GESTIÓN DE PRODUCTOS
+            // =============================================
+            
+            function loadInitialProducts() {
+                // Productos minoristas
+                products = [
+                    {
+                        id: 1,
+                        name: 'Dragón Articulado',
+                        description: 'Impresionante dragón con cuerpo flexible y articulado, perfecto para juegos de fantasía. Impreso con filamento PLA biodegradable.',
+                        price: 18500,
+                        image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                        category: 'animales'
+                    },
+                    {
+                        id: 2,
+                        name: 'Robot Flexi',
+                        description: 'Robot articulado con extremidades flexibles, ideal para desarrollar la imaginación. Fabricado con materiales 100% ecológicos.',
+                        price: 15000,
+                        image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                        category: 'robots'
+                    },
+                    {
+                        id: 3,
+                        name: 'Dinosaurio Articulado',
+                        description: 'Tyrannosaurus Rex con mandíbula móvil y articulaciones flexibles. Juguete educativo sobre prehistoria.',
+                        price: 16800,
+                        image: 'https://images.unsplash.com/photo-1596870239757-1a5db1efa261?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                        category: 'animales'
+                    },
+                    {
+                        id: 6,
+                        name: 'Puzzle 3D Geométrico',
+                        description: 'Desafía tu mente con este puzzle 3D de formas geométricas. Perfecto para desarrollar habilidades espaciales.',
+                        price: 12500,
+                        image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                        category: 'educativos'
+                    }
+                ];
+                
+                // Productos mayoristas
+                wholesaleProducts = [
+                    {
+                        id: 4,
+                        name: 'Lote de 10 Dragones Articulados',
+                        description: 'Pack mayorista de 10 dragones articulados. Ideal para revendedores. Precio especial por volumen.',
+                        price: 150000,
+                        image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                        category: 'animales',
+                        minQuantity: 10
+                    },
+                    {
+                        id: 5,
+                        name: 'Lote de 15 Robots Flexi',
+                        description: 'Pack mayorista de 15 robots flexi. Perfecto para tiendas de juguetes. Descuento por cantidad.',
+                        price: 180000,
+                        image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                        category: 'robots',
+                        minQuantity: 15
+                    },
+                    {
+                        id: 7,
+                        name: 'Kit Educativo STEM',
+                        description: 'Lote de 20 kits educativos STEM que incluyen rompecabezas y figuras geométricas. Perfecto para colegios y talleres.',
+                        price: 240000,
+                        image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                        category: 'educativos',
+                        minQuantity: 20
+                    }
+                ];
+                
+                localStorage.setItem('products', JSON.stringify(products));
+                localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+            }
+            
+            function renderProducts() {
+                renderMinoristaProducts();
+                renderMayoristaProducts();
+                renderAdminProducts();
+            }
+            
+            function renderMinoristaProducts() {
+                if (!minoristaGrid) return;
+                
+                minoristaGrid.innerHTML = '';
+                
+                products.forEach(product => {
+                    const productCard = createProductCard(product, false);
+                    minoristaGrid.appendChild(productCard);
+                });
+            }
+            
+            function renderMayoristaProducts() {
+                if (!mayoristaGrid) return;
+                
+                mayoristaGrid.innerHTML = '';
+                
+                wholesaleProducts.forEach(product => {
+                    const productCard = createProductCard(product, true);
+                    mayoristaGrid.appendChild(productCard);
+                });
+            }
+            
+            function renderAdminProducts() {
+                if (!adminGrid) return;
+                
+                adminGrid.innerHTML = '';
+                
+                // Combinar productos minoristas y mayoristas para administración
+                const allProducts = [...products, ...wholesaleProducts];
+                
+                allProducts.forEach(product => {
+                    const adminCard = createAdminProductCard(product);
+                    adminGrid.appendChild(adminCard);
+                });
+            }
+            
+            function createProductCard(product, isWholesale) {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}" loading="lazy">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-price">$${product.price.toLocaleString('es-CL')}</div>
+                        ${isWholesale && product.minQuantity ? `<div class="product-min-quantity">Mínimo: ${product.minQuantity} unidades</div>` : ''}
+                        <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20${encodeURIComponent(product.name)}" target="_blank" class="btn btn-primary">
+                            <span>Consultar por WhatsApp</span>
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                `;
+                return card;
+            }
+            
+            function createAdminProductCard(product) {
+                const isWholesale = product.minQuantity !== undefined;
+                const card = document.createElement('div');
+                card.className = 'admin-product-card';
+                card.innerHTML = `
+                    <div class="admin-product-header">
+                        <h3 class="admin-product-title">${product.name}</h3>
+                        <div class="admin-product-actions">
+                            <button class="admin-btn btn-edit" data-id="${product.id}" data-wholesale="${isWholesale}">Editar</button>
+                            <button class="admin-btn btn-delete" data-id="${product.id}" data-wholesale="${isWholesale}">Eliminar</button>
+                        </div>
+                    </div>
+                    <div class="admin-product-details">
+                        <p><strong>Precio:</strong> $${product.price.toLocaleString('es-CL')}</p>
+                        <p><strong>Categoría:</strong> ${product.category || 'Sin categoría'}</p>
+                        ${isWholesale ? `<p><strong>Tipo:</strong> Mayorista (Mín. ${product.minQuantity} unidades)</p>` : '<p><strong>Tipo:</strong> Minorista</p>'}
+                        <p>${product.description}</p>
+                    </div>
+                `;
+                
+                // Agregar eventos a los botones
+                const editBtn = card.querySelector('.btn-edit');
+                const deleteBtn = card.querySelector('.btn-delete');
+                
+                if (editBtn) editBtn.addEventListener('click', () => editProduct(product.id, isWholesale));
+                if (deleteBtn) deleteBtn.addEventListener('click', () => deleteProduct(product.id, isWholesale));
+                
+                return card;
+            }
+            
+            function showAddProductForm() {
+                const name = prompt('Nombre del producto:');
+                if (!name) return;
+                
+                const description = prompt('Descripción del producto:');
+                if (!description) return;
+                
+                const price = parseFloat(prompt('Precio del producto:'));
+                if (isNaN(price)) return;
+                
+                const category = prompt('Categoría (animales, robots, educativos, etc.):') || 'general';
+                
+                const isWholesale = confirm('¿Es un producto mayorista?');
+                let minQuantity = 0;
+                if (isWholesale) {
+                    minQuantity = parseInt(prompt('Cantidad mínima para venta mayorista:'));
+                    if (isNaN(minQuantity)) minQuantity = 10;
+                }
+                
+                const newProduct = {
+                    id: Date.now(), // ID simple basado en timestamp
+                    name,
+                    description,
+                    price,
+                    category,
+                    image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
+                };
+                
+                if (isWholesale) {
+                    newProduct.minQuantity = minQuantity;
+                    wholesaleProducts.push(newProduct);
+                    localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+                } else {
+                    products.push(newProduct);
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+                
+                renderProducts();
+                showNotification('Producto agregado correctamente', 'success');
+            }
+            
+            function editProduct(id, isWholesale) {
+                const productList = isWholesale ? wholesaleProducts : products;
+                const product = productList.find(p => p.id === id);
+                
+                if (!product) {
+                    showNotification('Producto no encontrado', 'error');
+                    return;
+                }
+                
+                const newName = prompt('Nuevo nombre:', product.name);
+                if (newName === null) return;
+                
+                const newDescription = prompt('Nueva descripción:', product.description);
+                if (newDescription === null) return;
+                
+                const newPrice = parseFloat(prompt('Nuevo precio:', product.price));
+                if (isNaN(newPrice)) {
+                    showNotification('Precio inválido', 'error');
+                    return;
+                }
+                
+                product.name = newName;
+                product.description = newDescription;
+                product.price = newPrice;
+                
+                if (isWholesale) {
+                    localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+                } else {
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+                
+                renderProducts();
+                showNotification('Producto actualizado correctamente', 'success');
+            }
+            
+            function deleteProduct(id, isWholesale) {
+                if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+                
+                if (isWholesale) {
+                    wholesaleProducts = wholesaleProducts.filter(p => p.id !== id);
+                    localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+                } else {
+                    products = products.filter(p => p.id !== id);
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+                
+                renderProducts();
+                showNotification('Producto eliminado correctamente', 'success');
+            }
+            
+            function refreshProducts() {
+                renderProducts();
+                showNotification('Productos actualizados', 'info');
+            }
+            
+            // =============================================
+            // EFECTOS VISUALES
+            // =============================================
+            
+            function initVisualEffects() {
+                // Efecto de escritura para el título
+                const heroTitle = document.querySelector('.hero-title');
+                if (heroTitle) {
+                    const titleLines = heroTitle.querySelectorAll('.title-line');
+                    titleLines.forEach((line, index) => {
+                        const text = line.textContent;
+                        line.textContent = '';
+                        let i = 0;
+                        
+                        setTimeout(() => {
+                            const typeWriter = setInterval(() => {
+                                if (i < text.length) {
+                                    line.textContent += text.charAt(i);
+                                    i++;
+                                } else {
+                                    clearInterval(typeWriter);
+                                }
+                            }, 100);
+                        }, index * 500);
+                    });
+                }
+                
+                // Partículas animadas
+                createParticles();
+            }
+            
+            function createParticles() {
+                const container = document.getElementById('particles-container');
+                if (!container) return; // Evitar errores si no existe
+                
+                const particleCount = 30;
+                
+                // Obtener colores de variables CSS (con fallback)
+                const cssPrimary = getCSSVar('--primary') || '#00ff88';
+                const cssSecondary = getCSSVar('--secondary') || '#6c63ff';
+                const cssAccent = getCSSVar('--accent') || '#ff2e63';
+                const colors = [cssPrimary.trim(), cssSecondary.trim(), cssAccent.trim()];
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // Posición aleatoria
+                    const left = Math.random() * 100;
+                    const size = Math.random() * 4 + 2;
+                    const delay = Math.random() * 15;
+                    const duration = Math.random() * 10 + 10;
+                    
+                    particle.style.left = `${left}%`;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.animationDelay = `${delay}s`;
+                    particle.style.animationDuration = `${duration}s`;
+                    
+                    // Color aleatorio
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.background = color;
+                    
+                    container.appendChild(particle);
+                }
+            }
+            
+            // =============================================
+            // UTILIDADES
+            // =============================================
+            
+            function showNotification(message, type = 'info') {
+                // Crear elemento de notificación
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.textContent = message;
+                
+                // Agregar al DOM
+                document.body.appendChild(notification);
+                
+                // Animación de entrada
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Eliminar después de 3 segundos
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            function getCSSVar(name) {
+                return getComputedStyle(document.documentElement).getPropertyValue(name);
+            }
+            
+            // =============================================
+            // INICIAR APLICACIÓN
+            // =============================================
+            
+            init();
+        });
+    </script>
 </body>
 </html>
