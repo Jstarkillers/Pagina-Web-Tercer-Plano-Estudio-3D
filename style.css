@@ -202,6 +202,8 @@ body {
     font-size: 0.8rem;
     border-bottom: 1px solid rgba(108, 99, 255, 0.2);
     backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 1001;
 }
 
 .location-bar .container {
@@ -225,6 +227,14 @@ body {
 
 .locations i {
     color: var(--primary);
+}
+
+.location-fabrica i {
+    color: var(--primary);
+}
+
+.location-punto-venta i {
+    color: var(--accent);
 }
 
 /* HEADER PRINCIPAL */
@@ -657,6 +667,37 @@ body {
 
 .close-modal:hover {
     color: var(--text);
+}
+
+.auth-tabs {
+    display: flex;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(108, 99, 255, 0.3);
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 0.8rem;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border-bottom: 2px solid transparent;
+}
+
+.auth-tab.active {
+    color: var(--primary);
+    border-bottom: 2px solid var(--primary);
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
 }
 
 /* SECCIÓN HERO */
@@ -1097,8 +1138,42 @@ body {
     background: rgba(10, 10, 22, 0.5);
 }
 
-.wholesale-products {
-    background: rgba(26, 26, 46, 0.7);
+.catalog-selector {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+    gap: 1rem;
+}
+
+.catalog-btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 50px;
+    background: rgba(26, 26, 46, 0.5);
+    color: var(--text-light);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid rgba(108, 99, 255, 0.3);
+}
+
+.catalog-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: var(--dark);
+    box-shadow: var(--glow);
+}
+
+.catalog-btn:hover:not(.active) {
+    background: rgba(108, 99, 255, 0.2);
+    color: var(--text);
+}
+
+.catalog-content {
+    display: none;
+}
+
+.catalog-content.active {
+    display: block;
 }
 
 .products-grid {
@@ -1197,6 +1272,33 @@ body {
 .product-card .btn {
     width: 100%;
     justify-content: center;
+}
+
+.coming-soon {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: rgba(26, 26, 46, 0.3);
+    border-radius: 20px;
+    border: 2px dashed rgba(108, 99, 255, 0.3);
+}
+
+.coming-soon i {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.coming-soon h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text);
+}
+
+.coming-soon p {
+    color: var(--text-light);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
 }
 
 /* SECCIÓN SERVICIOS */
@@ -1601,6 +1703,23 @@ body {
 
     .location-bar {
         font-size: 0.7rem;
+        position: relative;
+        z-index: 1002;
+    }
+    
+    .locations {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .catalog-selector {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .catalog-btn {
+        width: 100%;
+        max-width: 300px;
     }
 }
 
