@@ -59,34 +59,41 @@ function setupEventListeners() {
         link.addEventListener('click', closeMobileMenu);
     });
     
-    // Autenticación
-    const loginModal = document.getElementById('login-modal');
-    const registerModal = document.getElementById('register-modal');
-    const loginBtn = document.getElementById('login-btn');
-    const registerBtn = document.getElementById('register-btn');
+    // Autenticación unificada
+    const authModal = document.getElementById('auth-modal');
+    const authBtn = document.getElementById('auth-btn');
+    const mobileAuthBtn = document.getElementById('mobile-auth-btn');
     const logoutBtn = document.getElementById('logout-btn');
-    const closeLogin = document.getElementById('close-login');
-    const closeRegister = document.getElementById('close-register');
-    const mobileLoginBtn = document.getElementById('mobile-login-btn');
-    const mobileRegisterBtn = document.getElementById('mobile-register-btn');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    const closeAuth = document.getElementById('close-auth');
     
-    if (loginBtn) loginBtn.addEventListener('click', () => openModal(loginModal));
-    if (registerBtn) registerBtn.addEventListener('click', () => openModal(registerModal));
-    if (mobileLoginBtn) mobileLoginBtn.addEventListener('click', () => openModal(loginModal));
-    if (mobileRegisterBtn) mobileRegisterBtn.addEventListener('click', () => openModal(registerModal));
-    if (logoutBtn) logoutBtn.addEventListener('click', logout);
-    if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', logout);
-    
-    // Cerrar modales
-    if (closeLogin) closeLogin.addEventListener('click', () => closeModal(loginModal));
-    if (closeRegister) closeRegister.addEventListener('click', () => closeModal(registerModal));
-    
-    // Formularios
+    // Tabs de autenticación
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
+    
+    if (authBtn) authBtn.addEventListener('click', () => openModal(authModal));
+    if (mobileAuthBtn) mobileAuthBtn.addEventListener('click', () => openModal(authModal));
+    if (logoutBtn) logoutBtn.addEventListener('click', logout);
+    if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', logout);
+    if (closeAuth) closeAuth.addEventListener('click', () => closeModal(authModal));
+    
+    // Tabs de autenticación
+    if (loginTab) loginTab.addEventListener('click', () => switchAuthTab('login'));
+    if (registerTab) registerTab.addEventListener('click', () => switchAuthTab('register'));
+    
+    // Formularios
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     if (registerForm) registerForm.addEventListener('submit', handleRegister);
+    
+    // Selector de catálogo
+    document.querySelectorAll('.catalog-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const catalogType = this.getAttribute('data-catalog');
+            switchCatalog(catalogType);
+        });
+    });
     
     // Administración
     const addProductBtn = document.getElementById('add-product-btn');
@@ -168,12 +175,43 @@ function closeModal(modal) {
     document.body.style.overflow = '';
 }
 
+function switchAuthTab(tab) {
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    
+    if (tab === 'login') {
+        loginTab.classList.add('active');
+        registerTab.classList.remove('active');
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+    } else {
+        loginTab.classList.remove('active');
+        registerTab.classList.add('active');
+        loginForm.classList.remove('active');
+        registerForm.classList.add('active');
+    }
+}
+
+function switchCatalog(catalogType) {
+    // Actualizar botones
+    document.querySelectorAll('.catalog-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`.catalog-btn[data-catalog="${catalogType}"]`).classList.add('active');
+    
+    // Actualizar contenido
+    document.querySelectorAll('.catalog-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`${catalogType}-content`).classList.add('active');
+}
+
 function updateUI() {
-    const loginBtn = document.getElementById('login-btn');
-    const registerBtn = document.getElementById('register-btn');
+    const authBtn = document.getElementById('auth-btn');
     const logoutBtn = document.getElementById('logout-btn');
-    const mobileLoginBtn = document.getElementById('mobile-login-btn');
-    const mobileRegisterBtn = document.getElementById('mobile-register-btn');
+    const mobileAuthBtn = document.getElementById('mobile-auth-btn');
     const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
     const userWelcome = document.getElementById('user-welcome');
     const adminLink = document.getElementById('admin-link');
@@ -182,11 +220,9 @@ function updateUI() {
     
     if (currentUser) {
         // Usuario logueado
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (registerBtn) registerBtn.style.display = 'none';
+        if (authBtn) authBtn.style.display = 'none';
         if (logoutBtn) logoutBtn.style.display = 'block';
-        if (mobileLoginBtn) mobileLoginBtn.style.display = 'none';
-        if (mobileRegisterBtn) mobileRegisterBtn.style.display = 'none';
+        if (mobileAuthBtn) mobileAuthBtn.style.display = 'none';
         if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'block';
         if (userWelcome) {
             userWelcome.textContent = `Hola, ${currentUser.username}`;
@@ -205,11 +241,9 @@ function updateUI() {
         }
     } else {
         // Usuario no logueado
-        if (loginBtn) loginBtn.style.display = 'block';
-        if (registerBtn) registerBtn.style.display = 'block';
+        if (authBtn) authBtn.style.display = 'block';
         if (logoutBtn) logoutBtn.style.display = 'none';
-        if (mobileLoginBtn) mobileLoginBtn.style.display = 'block';
-        if (mobileRegisterBtn) mobileRegisterBtn.style.display = 'block';
+        if (mobileAuthBtn) mobileAuthBtn.style.display = 'block';
         if (mobileLogoutBtn) mobileLogoutBtn.style.display = 'none';
         if (userWelcome) userWelcome.style.display = 'none';
         
@@ -246,7 +280,7 @@ function handleLogin(e) {
         };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateUI();
-        closeModal(document.getElementById('login-modal'));
+        closeModal(document.getElementById('auth-modal'));
         showNotification('¡Bienvenido, administrador!', 'success');
         return;
     }
@@ -262,7 +296,7 @@ function handleLogin(e) {
         };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         updateUI();
-        closeModal(document.getElementById('login-modal'));
+        closeModal(document.getElementById('auth-modal'));
         showNotification('¡Sesión iniciada correctamente!', 'success');
     } else {
         showNotification('Usuario o contraseña incorrectos', 'error');
@@ -304,7 +338,7 @@ function handleRegister(e) {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
     
     updateUI();
-    closeModal(document.getElementById('register-modal'));
+    closeModal(document.getElementById('auth-modal'));
     showNotification('¡Registro exitoso! Bienvenido/a', 'success');
 }
 
@@ -320,72 +354,21 @@ function logout() {
 // =============================================
 
 function loadInitialProducts() {
-    // Productos minoristas
+    // Productos minoristas - Solo un producto de ejemplo
     products = [
         {
             id: 1,
-            name: 'Dragón Articulado',
-            description: 'Impresionante dragón con cuerpo flexible y articulado, perfecto para juegos de fantasía. Impreso con filamento PLA biodegradable.',
-            price: 18500,
-            image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-            category: 'animales'
-        },
-        {
-            id: 2,
-            name: 'Robot Flexi',
-            description: 'Robot articulado con extremidades flexibles, ideal para desarrollar la imaginación. Fabricado con materiales 100% ecológicos.',
-            price: 15000,
+            name: 'Figuras Pequeñas',
+            description: 'Adorables figuras impresas en 3D con materiales ecológicos. Perfectas para coleccionar o regalar.',
+            price: 3000,
+            price2: 5000,
             image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-            category: 'robots'
-        },
-        {
-            id: 3,
-            name: 'Dinosaurio Articulado',
-            description: 'Tyrannosaurus Rex con mandíbula móvil y articulaciones flexibles. Juguete educativo sobre prehistoria.',
-            price: 16800,
-            image: 'https://images.unsplash.com/photo-1596870239757-1a5db1efa261?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-            category: 'animales'
-        },
-        {
-            id: 6,
-            name: 'Puzzle 3D Geométrico',
-            description: 'Desafía tu mente con este puzzle 3D de formas geométricas. Perfecto para desarrollar habilidades espaciales.',
-            price: 12500,
-            image: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-            category: 'educativos'
+            category: 'figuras'
         }
     ];
     
-    // Productos mayoristas
-    wholesaleProducts = [
-        {
-            id: 4,
-            name: 'Lote de 10 Dragones Articulados',
-            description: 'Pack mayorista de 10 dragones articulados. Ideal para revendedores. Precio especial por volumen.',
-            price: 150000,
-            image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-            category: 'animales',
-            minQuantity: 10
-        },
-        {
-            id: 5,
-            name: 'Lote de 15 Robots Flexi',
-            description: 'Pack mayorista de 15 robots flexi. Perfecto para tiendas de juguetes. Descuento por cantidad.',
-            price: 180000,
-            image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-            category: 'robots',
-            minQuantity: 15
-        },
-        {
-            id: 7,
-            name: 'Kit Educativo STEM',
-            description: 'Lote de 20 kits educativos STEM que incluyen rompecabezas y figuras geométricas. Perfecto para colegios y talleres.',
-            price: 240000,
-            image: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-            category: 'educativos',
-            minQuantity: 20
-        }
-    ];
+    // Productos mayoristas - Vacío por ahora
+    wholesaleProducts = [];
     
     localStorage.setItem('products', JSON.stringify(products));
     localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
@@ -407,18 +390,25 @@ function renderMinoristaProducts() {
         const productCard = createProductCard(product, false);
         minoristaGrid.appendChild(productCard);
     });
+    
+    // Si no hay productos, mostrar mensaje
+    if (products.length === 0) {
+        const comingSoon = document.createElement('div');
+        comingSoon.className = 'coming-soon';
+        comingSoon.innerHTML = `
+            <i class="fas fa-box-open"></i>
+            <h3>Pronto Más Stock Disponible</h3>
+            <p>Estamos trabajando en nuevos diseños y productos. ¡Vuelve pronto para descubrir nuestras novedades!</p>
+        `;
+        minoristaGrid.appendChild(comingSoon);
+    }
 }
 
 function renderMayoristaProducts() {
     const mayoristaGrid = document.getElementById('mayorista-grid');
     if (!mayoristaGrid) return;
     
-    mayoristaGrid.innerHTML = '';
-    
-    wholesaleProducts.forEach(product => {
-        const productCard = createProductCard(product, true);
-        mayoristaGrid.appendChild(productCard);
-    });
+    // Ya está definido en el HTML, no necesitamos hacer nada aquí
 }
 
 function renderAdminProducts() {
@@ -439,6 +429,15 @@ function renderAdminProducts() {
 function createProductCard(product, isWholesale) {
     const card = document.createElement('div');
     card.className = 'product-card';
+    
+    let priceHTML = `<div class="product-price">$${product.price.toLocaleString('es-CL')}</div>`;
+    if (product.price2) {
+        priceHTML = `
+            <div class="product-price">1 unidad: $${product.price.toLocaleString('es-CL')}</div>
+            <div class="product-price">2 unidades: $${product.price2.toLocaleString('es-CL')}</div>
+        `;
+    }
+    
     card.innerHTML = `
         <div class="product-image">
             <img src="${product.image}" alt="${product.name}" loading="lazy">
@@ -446,7 +445,7 @@ function createProductCard(product, isWholesale) {
         <div class="product-info">
             <h3 class="product-title">${product.name}</h3>
             <p class="product-description">${product.description}</p>
-            <div class="product-price">$${product.price.toLocaleString('es-CL')}</div>
+            ${priceHTML}
             ${isWholesale && product.minQuantity ? `<div class="product-min-quantity">Mínimo: ${product.minQuantity} unidades</div>` : ''}
             <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20${encodeURIComponent(product.name)}" target="_blank" class="btn btn-primary">
                 <span>Consultar por WhatsApp</span>
@@ -471,6 +470,7 @@ function createAdminProductCard(product) {
         </div>
         <div class="admin-product-details">
             <p><strong>Precio:</strong> $${product.price.toLocaleString('es-CL')}</p>
+            ${product.price2 ? `<p><strong>Precio 2 unidades:</strong> $${product.price2.toLocaleString('es-CL')}</p>` : ''}
             <p><strong>Categoría:</strong> ${product.category || 'Sin categoría'}</p>
             ${isWholesale ? `<p><strong>Tipo:</strong> Mayorista (Mín. ${product.minQuantity} unidades)</p>` : '<p><strong>Tipo:</strong> Minorista</p>'}
             <p>${product.description}</p>
