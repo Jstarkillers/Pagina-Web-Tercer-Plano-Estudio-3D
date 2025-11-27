@@ -12,6 +12,341 @@ const SUPER_USERS = {
 let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
 let products = JSON.parse(localStorage.getItem('products')) || [];
 let wholesaleProducts = JSON.parse(localStorage.getItem('wholesaleProducts')) || [];
+let categories = JSON.parse(localStorage.getItem('categories')) || [
+    { id: 1, name: 'Animales', description: 'Juguetes de animales', productCount: 0, status: 'active' },
+    { id: 2, name: 'Robots', description: 'Juguetes robóticos', productCount: 0, status: 'active' },
+    { id: 3, name: 'Educativos', description: 'Juguetes educativos', productCount: 0, status: 'active' },
+    { id: 4, name: 'Vehículos', description: 'Vehículos y medios de transporte', productCount: 0, status: 'active' },
+    { id: 5, name: 'Construcción', description: 'Juguetes de construcción', productCount: 0, status: 'active' },
+    { id: 6, name: 'Personalizado', description: 'Productos personalizados', productCount: 0, status: 'active' }
+];
+
+// Producto en edición
+let editingProduct = null;
+
+// =============================================
+// EFECTO DE CURSOR PERSONALIZADO
+// =============================================
+
+function initCustomCursor() {
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
+    
+    if (!cursor || !cursorFollower) return;
+    
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        
+        setTimeout(() => {
+            cursorFollower.style.left = e.clientX + 'px';
+            cursorFollower.style.top = e.clientY + 'px';
+        }, 100);
+    });
+    
+    // Efectos al pasar sobre elementos interactivos
+    const interactiveElements = document.querySelectorAll('a, button, .nav-link, .btn, .product-card, .value-card, .service-card');
+    
+    interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursor.style.transform = 'scale(1.5)';
+            cursorFollower.style.transform = 'scale(1.5)';
+            cursorFollower.style.borderColor = 'var(--primary)';
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            cursor.style.transform = 'scale(1)';
+            cursorFollower.style.transform = 'scale(1)';
+            cursorFollower.style.borderColor = 'rgba(0, 255, 136, 0.5)';
+        });
+    });
+}
+
+// =============================================
+// FONDO DE PARTÍCULAS
+// =============================================
+
+function initParticles() {
+    if (typeof particlesJS !== 'undefined' && document.getElementById('particles-js')) {
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: ['#00ff88', '#6c63ff', '#ff2e63']
+                },
+                shape: {
+                    type: 'circle',
+                    stroke: {
+                        width: 0,
+                        color: '#000000'
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: true,
+                        speed: 2,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#6c63ff',
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 1,
+                    direction: 'none',
+                    random: true,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: 'grab'
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: 'push'
+                    },
+                    resize: true
+                },
+                modes: {
+                    grab: {
+                        distance: 140,
+                        line_linked: {
+                            opacity: 0.5
+                        }
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    }
+}
+
+// =============================================
+// FONDO 3D CON THREE.JS
+// =============================================
+
+function init3DBackground() {
+    const container = document.getElementById('background-3d');
+    if (!container || typeof THREE === 'undefined') return;
+
+    // Configuración de la escena
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
+
+    // Controles de órbita para interactividad
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
+
+    // Geometrías y materiales
+    const geometries = [
+        new THREE.BoxGeometry(1, 1, 1),
+        new THREE.SphereGeometry(0.7, 12, 12),
+        new THREE.ConeGeometry(0.5, 1.5, 8),
+        new THREE.CylinderGeometry(0.5, 0.5, 1, 12),
+        new THREE.TorusGeometry(0.6, 0.2, 12, 24)
+    ];
+
+    const materials = [
+        new THREE.MeshBasicMaterial({ 
+            color: 0x00ff88, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        }),
+        new THREE.MeshBasicMaterial({ 
+            color: 0x6c63ff, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        }),
+        new THREE.MeshBasicMaterial({ 
+            color: 0xff2e63, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        })
+    ];
+
+    // Crear objetos 3D
+    const objects = [];
+    const objectCount = 15;
+
+    for (let i = 0; i < objectCount; i++) {
+        const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+        const material = materials[Math.floor(Math.random() * materials.length)];
+        const mesh = new THREE.Mesh(geometry, material);
+        
+        // Posición aleatoria
+        mesh.position.x = (Math.random() - 0.5) * 20;
+        mesh.position.y = (Math.random() - 0.5) * 20;
+        mesh.position.z = (Math.random() - 0.5) * 20;
+        
+        // Rotación aleatoria
+        mesh.rotation.x = Math.random() * Math.PI;
+        mesh.rotation.y = Math.random() * Math.PI;
+        
+        // Escala aleatoria
+        const scale = Math.random() * 0.8 + 0.5;
+        mesh.scale.set(scale, scale, scale);
+        
+        // Velocidad de rotación aleatoria
+        mesh.userData = {
+            rotationSpeed: {
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02,
+                z: (Math.random() - 0.5) * 0.02
+            }
+        };
+        
+        scene.add(mesh);
+        objects.push(mesh);
+    }
+
+    // Posición de la cámara
+    camera.position.z = 15;
+
+    // Animación
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // Rotar objetos
+        objects.forEach(obj => {
+            obj.rotation.x += obj.userData.rotationSpeed.x;
+            obj.rotation.y += obj.userData.rotationSpeed.y;
+            obj.rotation.z += obj.userData.rotationSpeed.z;
+        });
+        
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    // Manejo de redimensionamiento
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    animate();
+}
+
+// =============================================
+// SISTEMA DE CARGA DE IMÁGENES LOCALES
+// =============================================
+
+function initImageUpload() {
+    const uploadContainer = document.getElementById('image-upload-container');
+    const fileInput = document.getElementById('product-image-file');
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    const urlInput = document.getElementById('product-image-url');
+    
+    if (!uploadContainer || !fileInput || !preview || !previewImg || !urlInput) return;
+    
+    // Arrastrar y soltar
+    uploadContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadContainer.classList.add('dragover');
+    });
+    
+    uploadContainer.addEventListener('dragleave', () => {
+        uploadContainer.classList.remove('dragover');
+    });
+    
+    uploadContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadContainer.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            handleImageSelection(e.dataTransfer.files[0]);
+        }
+    });
+    
+    // Click para seleccionar
+    uploadContainer.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            handleImageSelection(e.target.files[0]);
+        }
+    });
+    
+    // Cuando se ingresa una URL
+    urlInput.addEventListener('input', () => {
+        if (urlInput.value) {
+            previewImg.src = urlInput.value;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    });
+    
+    function handleImageSelection(file) {
+        if (!file.type.match('image.*')) {
+            showNotification('Por favor, selecciona solo archivos de imagen', 'error');
+            return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            previewImg.src = e.target.result;
+            preview.style.display = 'block';
+            urlInput.value = ''; // Limpiar URL si se sube un archivo
+        };
+        
+        reader.readAsDataURL(file);
+    }
+}
 
 // =============================================
 // INICIALIZACIÓN
@@ -22,6 +357,9 @@ function init() {
     if (products.length === 0) {
         loadInitialProducts();
     }
+    
+    // Guardar categorías iniciales
+    localStorage.setItem('categories', JSON.stringify(categories));
     
     // Configurar eventos
     setupEventListeners();
@@ -37,6 +375,12 @@ function init() {
     
     // Configurar scroll
     setupScrollEffects();
+    
+    // Inicializar efectos
+    initCustomCursor();
+    initParticles();
+    init3DBackground();
+    initImageUpload();
 }
 
 // =============================================
@@ -87,23 +431,46 @@ function setupEventListeners() {
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
     if (registerForm) registerForm.addEventListener('submit', handleRegister);
     
-    // Selector de catálogo
-    document.querySelectorAll('.catalog-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const catalogType = this.getAttribute('data-catalog');
-            switchCatalog(catalogType);
-        });
-    });
-    
-    // Administración
+    // Administración - Productos
     const addProductBtn = document.getElementById('add-product-btn');
     const refreshProductsBtn = document.getElementById('refresh-products-btn');
+    const productModal = document.getElementById('product-modal');
+    const productForm = document.getElementById('product-form');
+    const closeProductModal = document.getElementById('close-product-modal');
+    const cancelProduct = document.getElementById('cancel-product');
+    const productTypeSelect = document.getElementById('product-type');
     
     if (addProductBtn) {
         addProductBtn.addEventListener('click', showAddProductForm);
     }
     if (refreshProductsBtn) {
         refreshProductsBtn.addEventListener('click', refreshProducts);
+    }
+    if (closeProductModal) {
+        closeProductModal.addEventListener('click', () => closeModal(productModal));
+    }
+    if (cancelProduct) {
+        cancelProduct.addEventListener('click', () => closeModal(productModal));
+    }
+    if (productForm) {
+        productForm.addEventListener('submit', handleProductSubmit);
+    }
+    if (productTypeSelect) {
+        productTypeSelect.addEventListener('change', handleProductTypeChange);
+    }
+    
+    // Pestañas de administración
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const tabId = tab.getAttribute('data-tab');
+            switchAdminTab(tabId);
+        });
+    });
+    
+    // Categorías
+    const addCategoryBtn = document.getElementById('add-category-btn');
+    if (addCategoryBtn) {
+        addCategoryBtn.addEventListener('click', showAddCategoryForm);
     }
     
     // Scroll suave para enlaces internos
@@ -173,6 +540,15 @@ function closeModal(modal) {
     if (!modal) return;
     modal.style.display = 'none';
     document.body.style.overflow = '';
+    // Resetear formulario de producto
+    if (modal.id === 'product-modal') {
+        editingProduct = null;
+        document.getElementById('product-form').reset();
+        document.getElementById('product-modal-title').textContent = 'Agregar Producto';
+        document.getElementById('price2-group').style.display = 'none';
+        document.getElementById('min-quantity-group').style.display = 'none';
+        document.getElementById('image-preview').style.display = 'none';
+    }
 }
 
 function switchAuthTab(tab) {
@@ -194,18 +570,28 @@ function switchAuthTab(tab) {
     }
 }
 
-function switchCatalog(catalogType) {
-    // Actualizar botones
-    document.querySelectorAll('.catalog-btn').forEach(btn => {
-        btn.classList.remove('active');
+function switchAdminTab(tabId) {
+    // Actualizar pestañas activas
+    document.querySelectorAll('.admin-tab').forEach(tab => {
+        tab.classList.remove('active');
     });
-    document.querySelector(`.catalog-btn[data-catalog="${catalogType}"]`).classList.add('active');
-    
-    // Actualizar contenido
-    document.querySelectorAll('.catalog-content').forEach(content => {
+    document.querySelectorAll('.admin-tab-content').forEach(content => {
         content.classList.remove('active');
     });
-    document.getElementById(`${catalogType}-content`).classList.add('active');
+    
+    // Activar pestaña seleccionada
+    const tabElement = document.querySelector(`.admin-tab[data-tab="${tabId}"]`);
+    const contentElement = document.getElementById(`${tabId}-tab`);
+    
+    if (tabElement) tabElement.classList.add('active');
+    if (contentElement) contentElement.classList.add('active');
+    
+    // Cargar contenido específico de la pestaña
+    if (tabId === 'categories') {
+        renderCategoriesTable();
+    } else if (tabId === 'analytics') {
+        updateAnalytics();
+    }
 }
 
 function updateUI() {
@@ -234,6 +620,9 @@ function updateUI() {
             if (adminLink) adminLink.style.display = 'block';
             if (mobileAdminLink) mobileAdminLink.style.display = 'block';
             if (adminSection) adminSection.style.display = 'block';
+            
+            // Actualizar estadísticas
+            updateAdminStats();
         } else {
             if (adminLink) adminLink.style.display = 'none';
             if (mobileAdminLink) mobileAdminLink.style.display = 'none';
@@ -350,25 +739,53 @@ function logout() {
 }
 
 // =============================================
-// GESTIÓN DE PRODUCTOS
+// GESTIÓN DE PRODUCTOS MEJORADA
 // =============================================
 
 function loadInitialProducts() {
-    // Productos minoristas - Solo un producto de ejemplo
+    // Productos minoristas de ejemplo
     products = [
         {
             id: 1,
-            name: 'Figuras Pequeñas',
-            description: 'Adorables figuras impresas en 3D con materiales ecológicos. Perfectas para coleccionar o regalar.',
-            price: 3000,
-            price2: 5000,
-            image: 'https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
-            category: 'figuras'
+            name: 'Robot Eco-Amistoso',
+            description: 'Un adorable robot impreso en 3D con materiales biodegradables. Perfecto para aprender sobre tecnología y sostenibilidad.',
+            price: 12990,
+            price2: 23980,
+            category: 'robots',
+            type: 'minorista',
+            image: 'https://images.unsplash.com/photo-1589256469067-ea99122bbdc4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+            status: 'activo',
+            tags: ['robot', 'ecológico', 'educativo', '3D']
+        },
+        {
+            id: 2,
+            name: 'Animales del Bosque',
+            description: 'Set de animales del bosque chileno impresos en 3D con filamento PLA. Incluye zorro, puma y huemul.',
+            price: 8990,
+            price2: 16980,
+            category: 'animales',
+            type: 'minorista',
+            image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+            status: 'activo',
+            tags: ['animales', 'bosque', 'chileno', 'ecológico']
         }
     ];
     
-    // Productos mayoristas - Vacío por ahora
-    wholesaleProducts = [];
+    // Productos mayoristas de ejemplo
+    wholesaleProducts = [
+        {
+            id: 3,
+            name: 'Kit Educativo STEM',
+            description: 'Kit completo de piezas educativas para aprendizaje STEM. Ideal para escuelas y talleres.',
+            price: 5990,
+            category: 'educativos',
+            type: 'mayorista',
+            minQuantity: 10,
+            image: 'https://images.unsplash.com/photo-1596495577886-d920f1fb7238?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+            status: 'activo',
+            tags: ['STEM', 'educativo', 'escuela', 'aprendizaje']
+        }
+    ];
     
     localStorage.setItem('products', JSON.stringify(products));
     localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
@@ -377,7 +794,11 @@ function loadInitialProducts() {
 function renderProducts() {
     renderMinoristaProducts();
     renderMayoristaProducts();
-    renderAdminProducts();
+    
+    if (currentUser && currentUser.isSuper) {
+        renderAdminProducts();
+        updateAdminStats();
+    }
 }
 
 function renderMinoristaProducts() {
@@ -386,21 +807,27 @@ function renderMinoristaProducts() {
     
     minoristaGrid.innerHTML = '';
     
-    products.forEach(product => {
-        const productCard = createProductCard(product, false);
-        minoristaGrid.appendChild(productCard);
-    });
+    const activeProducts = products.filter(p => p.status === 'activo');
     
-    // Si no hay productos, mostrar mensaje
-    if (products.length === 0) {
+    if (activeProducts.length === 0) {
+        // Mostrar mensaje de "pronto disponible" para minorista
         const comingSoon = document.createElement('div');
         comingSoon.className = 'coming-soon';
         comingSoon.innerHTML = `
-            <i class="fas fa-box-open"></i>
-            <h3>Pronto Más Stock Disponible</h3>
-            <p>Estamos trabajando en nuevos diseños y productos. ¡Vuelve pronto para descubrir nuestras novedades!</p>
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Pronto Disponible</h3>
+            <p>Estamos preparando nuestro catálogo minorista con los mejores juguetes ecológicos impresos en 3D. ¡Contáctanos para más información!</p>
+            <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20sus%20productos%20minoristas" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
+                <span>Contactar para Más Información</span>
+                <i class="fab fa-whatsapp"></i>
+            </a>
         `;
         minoristaGrid.appendChild(comingSoon);
+    } else {
+        activeProducts.forEach(product => {
+            const productCard = createProductCard(product, false);
+            minoristaGrid.appendChild(productCard);
+        });
     }
 }
 
@@ -408,7 +835,30 @@ function renderMayoristaProducts() {
     const mayoristaGrid = document.getElementById('mayorista-grid');
     if (!mayoristaGrid) return;
     
-    // Ya está definido en el HTML, no necesitamos hacer nada aquí
+    mayoristaGrid.innerHTML = '';
+    
+    const activeProducts = wholesaleProducts.filter(p => p.status === 'activo');
+    
+    if (activeProducts.length === 0) {
+        // Mostrar mensaje de "pronto disponible" para mayorista
+        const comingSoon = document.createElement('div');
+        comingSoon.className = 'coming-soon';
+        comingSoon.innerHTML = `
+            <i class="fas fa-truck-loading"></i>
+            <h3>Pronto Disponible</h3>
+            <p>Si estás interesado en distribuir nuestros productos, contáctanos para acceder a precios especiales por volumen.</p>
+            <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20distribuir%20sus%20productos" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
+                <span>Contactar para Distribución</span>
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        `;
+        mayoristaGrid.appendChild(comingSoon);
+    } else {
+        activeProducts.forEach(product => {
+            const productCard = createProductCard(product, true);
+            mayoristaGrid.appendChild(productCard);
+        });
+    }
 }
 
 function renderAdminProducts() {
@@ -420,10 +870,29 @@ function renderAdminProducts() {
     // Combinar productos minoristas y mayoristas para administración
     const allProducts = [...products, ...wholesaleProducts];
     
-    allProducts.forEach(product => {
-        const adminCard = createAdminProductCard(product);
-        adminGrid.appendChild(adminCard);
-    });
+    if (allProducts.length === 0) {
+        adminGrid.innerHTML = `
+            <div class="coming-soon">
+                <i class="fas fa-box-open"></i>
+                <h3>No hay productos</h3>
+                <p>Aún no has agregado ningún producto. ¡Comienza agregando tu primer producto!</p>
+                <button class="btn btn-primary" style="margin-top: 1.5rem;" id="add-first-product">
+                    <span>Agregar Primer Producto</span>
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        `;
+        
+        const addFirstProductBtn = document.getElementById('add-first-product');
+        if (addFirstProductBtn) {
+            addFirstProductBtn.addEventListener('click', showAddProductForm);
+        }
+    } else {
+        allProducts.forEach(product => {
+            const adminCard = createAdminProductCard(product);
+            adminGrid.appendChild(adminCard);
+        });
+    }
 }
 
 function createProductCard(product, isWholesale) {
@@ -457,23 +926,34 @@ function createProductCard(product, isWholesale) {
 }
 
 function createAdminProductCard(product) {
-    const isWholesale = product.minQuantity !== undefined;
+    const isWholesale = product.type === 'mayorista';
     const card = document.createElement('div');
     card.className = 'admin-product-card';
+    
+    const statusBadge = product.status === 'activo' ? 
+        '<span style="color: var(--primary); font-weight: 600;">● Activo</span>' : 
+        '<span style="color: var(--accent); font-weight: 600;">● Inactivo</span>';
+    
     card.innerHTML = `
         <div class="admin-product-header">
             <h3 class="admin-product-title">${product.name}</h3>
             <div class="admin-product-actions">
-                <button class="admin-btn btn-edit" data-id="${product.id}" data-wholesale="${isWholesale}">Editar</button>
-                <button class="admin-btn btn-delete" data-id="${product.id}" data-wholesale="${isWholesale}">Eliminar</button>
+                <button class="admin-btn btn-edit" data-id="${product.id}" data-type="${product.type}">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="admin-btn btn-delete" data-id="${product.id}" data-type="${product.type}">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
             </div>
         </div>
         <div class="admin-product-details">
             <p><strong>Precio:</strong> $${product.price.toLocaleString('es-CL')}</p>
             ${product.price2 ? `<p><strong>Precio 2 unidades:</strong> $${product.price2.toLocaleString('es-CL')}</p>` : ''}
-            <p><strong>Categoría:</strong> ${product.category || 'Sin categoría'}</p>
-            ${isWholesale ? `<p><strong>Tipo:</strong> Mayorista (Mín. ${product.minQuantity} unidades)</p>` : '<p><strong>Tipo:</strong> Minorista</p>'}
+            <p><strong>Categoría:</strong> ${getCategoryName(product.category)}</p>
+            <p><strong>Tipo:</strong> ${isWholesale ? 'Mayorista' : 'Minorista'} ${isWholesale ? `(Mín. ${product.minQuantity} unidades)` : ''}</p>
+            <p><strong>Estado:</strong> ${statusBadge}</p>
             <p>${product.description}</p>
+            ${product.tags && product.tags.length > 0 ? `<p><strong>Etiquetas:</strong> ${product.tags.join(', ')}</p>` : ''}
         </div>
     `;
     
@@ -487,45 +967,36 @@ function createAdminProductCard(product) {
     return card;
 }
 
+function getCategoryName(categoryId) {
+    const category = categories.find(c => c.id == categoryId);
+    return category ? category.name : 'Sin categoría';
+}
+
 function showAddProductForm() {
-    const name = prompt('Nombre del producto:');
-    if (!name) return;
+    editingProduct = null;
+    document.getElementById('product-modal-title').textContent = 'Agregar Producto';
+    document.getElementById('product-form').reset();
+    document.getElementById('price2-group').style.display = 'none';
+    document.getElementById('min-quantity-group').style.display = 'none';
+    document.getElementById('image-preview').style.display = 'none';
+    openModal(document.getElementById('product-modal'));
+}
+
+function handleProductTypeChange() {
+    const productType = document.getElementById('product-type').value;
+    const price2Group = document.getElementById('price2-group');
+    const minQuantityGroup = document.getElementById('min-quantity-group');
     
-    const description = prompt('Descripción del producto:');
-    if (!description) return;
-    
-    const price = parseFloat(prompt('Precio del producto:'));
-    if (isNaN(price)) return;
-    
-    const category = prompt('Categoría (animales, robots, educativos, etc.):') || 'general';
-    
-    const isWholesale = confirm('¿Es un producto mayorista?');
-    let minQuantity = 0;
-    if (isWholesale) {
-        minQuantity = parseInt(prompt('Cantidad mínima para venta mayorista:'));
-        if (isNaN(minQuantity)) minQuantity = 10;
-    }
-    
-    const newProduct = {
-        id: Date.now(), // ID simple basado en timestamp
-        name,
-        description,
-        price,
-        category,
-        image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
-    };
-    
-    if (isWholesale) {
-        newProduct.minQuantity = minQuantity;
-        wholesaleProducts.push(newProduct);
-        localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+    if (productType === 'minorista') {
+        price2Group.style.display = 'block';
+        minQuantityGroup.style.display = 'none';
+    } else if (productType === 'mayorista') {
+        price2Group.style.display = 'none';
+        minQuantityGroup.style.display = 'block';
     } else {
-        products.push(newProduct);
-        localStorage.setItem('products', JSON.stringify(products));
+        price2Group.style.display = 'none';
+        minQuantityGroup.style.display = 'none';
     }
-    
-    renderProducts();
-    showNotification('Producto agregado correctamente', 'success');
 }
 
 function editProduct(id, isWholesale) {
@@ -537,34 +1008,140 @@ function editProduct(id, isWholesale) {
         return;
     }
     
-    const newName = prompt('Nuevo nombre:', product.name);
-    if (newName === null) return;
+    editingProduct = product;
     
-    const newDescription = prompt('Nueva descripción:', product.description);
-    if (newDescription === null) return;
+    document.getElementById('product-modal-title').textContent = 'Editar Producto';
+    document.getElementById('product-name').value = product.name;
+    document.getElementById('product-description').value = product.description;
+    document.getElementById('product-category').value = product.category;
+    document.getElementById('product-type').value = product.type;
+    document.getElementById('product-price').value = product.price;
+    document.getElementById('product-price2').value = product.price2 || '';
+    document.getElementById('product-image-url').value = product.image;
+    document.getElementById('product-status').value = product.status;
+    document.getElementById('product-tags').value = product.tags ? product.tags.join(', ') : '';
     
-    const newPrice = parseFloat(prompt('Nuevo precio:', product.price));
-    if (isNaN(newPrice)) {
-        showNotification('Precio inválido', 'error');
+    // Mostrar vista previa de la imagen
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    previewImg.src = product.image;
+    preview.style.display = 'block';
+    
+    if (product.type === 'mayorista') {
+        document.getElementById('product-min-quantity').value = product.minQuantity || 10;
+    }
+    
+    // Mostrar/ocultar campos según tipo
+    handleProductTypeChange();
+    
+    openModal(document.getElementById('product-modal'));
+}
+
+async function handleProductSubmit(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('product-name').value;
+    const description = document.getElementById('product-description').value;
+    const category = document.getElementById('product-category').value;
+    const type = document.getElementById('product-type').value;
+    const price = parseFloat(document.getElementById('product-price').value);
+    const price2 = document.getElementById('product-price2').value ? parseFloat(document.getElementById('product-price2').value) : null;
+    const status = document.getElementById('product-status').value;
+    const tags = document.getElementById('product-tags').value ? document.getElementById('product-tags').value.split(',').map(tag => tag.trim()) : [];
+    const minQuantity = type === 'mayorista' ? parseInt(document.getElementById('product-min-quantity').value) : null;
+    
+    // Obtener imagen (archivo o URL)
+    const fileInput = document.getElementById('product-image-file');
+    const urlInput = document.getElementById('product-image-url');
+    let imageValue;
+    
+    if (fileInput.files.length > 0) {
+        // Usar archivo local
+        const file = fileInput.files[0];
+        imageValue = await readFileAsDataURL(file);
+    } else if (urlInput.value) {
+        // Usar URL
+        imageValue = urlInput.value;
+    } else {
+        showNotification('Por favor, proporciona una imagen (archivo o URL)', 'error');
         return;
     }
     
-    product.name = newName;
-    product.description = newDescription;
-    product.price = newPrice;
-    
-    if (isWholesale) {
-        localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
-    } else {
-        localStorage.setItem('products', JSON.stringify(products));
+    // Validaciones
+    if (!name || !description || !category || !type || !price || !imageValue) {
+        showNotification('Por favor, completa todos los campos obligatorios', 'error');
+        return;
     }
     
+    const productData = {
+        id: editingProduct ? editingProduct.id : Date.now(),
+        name,
+        description,
+        category,
+        type,
+        price,
+        price2,
+        image: imageValue,
+        status,
+        tags
+    };
+    
+    if (type === 'mayorista') {
+        productData.minQuantity = minQuantity;
+    }
+    
+    if (editingProduct) {
+        // Editar producto existente
+        const wasWholesale = editingProduct.type === 'mayorista';
+        const isNowWholesale = type === 'mayorista';
+        
+        // Eliminar de la lista original
+        if (wasWholesale) {
+            wholesaleProducts = wholesaleProducts.filter(p => p.id !== editingProduct.id);
+        } else {
+            products = products.filter(p => p.id !== editingProduct.id);
+        }
+        
+        // Agregar a la lista correcta
+        if (isNowWholesale) {
+            wholesaleProducts.push(productData);
+        } else {
+            products.push(productData);
+        }
+        
+        showNotification('Producto actualizado correctamente', 'success');
+    } else {
+        // Agregar nuevo producto
+        if (type === 'mayorista') {
+            wholesaleProducts.push(productData);
+        } else {
+            products.push(productData);
+        }
+        
+        showNotification('Producto agregado correctamente', 'success');
+    }
+    
+    // Actualizar localStorage
+    localStorage.setItem('products', JSON.stringify(products));
+    localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+    
+    // Cerrar modal y actualizar
+    closeModal(document.getElementById('product-modal'));
     renderProducts();
-    showNotification('Producto actualizado correctamente', 'success');
+}
+
+// Función auxiliar para leer un archivo como Data URL (base64)
+function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
 }
 
 function deleteProduct(id, isWholesale) {
-    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+    if (!confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.')) return;
     
     if (isWholesale) {
         wholesaleProducts = wholesaleProducts.filter(p => p.id !== id);
@@ -581,6 +1158,149 @@ function deleteProduct(id, isWholesale) {
 function refreshProducts() {
     renderProducts();
     showNotification('Productos actualizados', 'info');
+}
+
+function updateAdminStats() {
+    const totalProducts = products.length + wholesaleProducts.length;
+    const activeProducts = [...products, ...wholesaleProducts].filter(p => p.status === 'activo').length;
+    const minoristaCount = products.length;
+    const mayoristaCount = wholesaleProducts.length;
+    
+    const totalProductsEl = document.getElementById('total-products');
+    const activeProductsEl = document.getElementById('active-products');
+    const minoristaProductsEl = document.getElementById('minorista-products');
+    const mayoristaProductsEl = document.getElementById('mayorista-products');
+    
+    if (totalProductsEl) totalProductsEl.textContent = totalProducts;
+    if (activeProductsEl) activeProductsEl.textContent = activeProducts;
+    if (minoristaProductsEl) minoristaProductsEl.textContent = minoristaCount;
+    if (mayoristaProductsEl) mayoristaProductsEl.textContent = mayoristaCount;
+}
+
+// =============================================
+// GESTIÓN DE CATEGORÍAS
+// =============================================
+
+function renderCategoriesTable() {
+    const tableBody = document.getElementById('categories-table-body');
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = '';
+    
+    // Actualizar conteo de productos por categoría
+    updateCategoryProductCounts();
+    
+    categories.forEach(category => {
+        const row = document.createElement('tr');
+        
+        const statusBadge = category.status === 'active' ? 
+            '<span style="color: var(--primary);">● Activa</span>' : 
+            '<span style="color: var(--accent);">● Inactiva</span>';
+        
+        row.innerHTML = `
+            <td>${category.name}</td>
+            <td>${category.description}</td>
+            <td>${category.productCount}</td>
+            <td>${statusBadge}</td>
+            <td>
+                <button class="admin-btn btn-edit" data-category-id="${category.id}">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="admin-btn btn-delete" data-category-id="${category.id}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    // Agregar event listeners a los botones
+    document.querySelectorAll('.admin-btn[data-category-id]').forEach(btn => {
+        if (btn.classList.contains('btn-edit')) {
+            btn.addEventListener('click', (e) => {
+                const categoryId = e.currentTarget.getAttribute('data-category-id');
+                editCategory(categoryId);
+            });
+        } else if (btn.classList.contains('btn-delete')) {
+            btn.addEventListener('click', (e) => {
+                const categoryId = e.currentTarget.getAttribute('data-category-id');
+                deleteCategory(categoryId);
+            });
+        }
+    });
+}
+
+function updateCategoryProductCounts() {
+    // Reiniciar conteos
+    categories.forEach(category => {
+        category.productCount = 0;
+    });
+    
+    // Contar productos por categoría
+    [...products, ...wholesaleProducts].forEach(product => {
+        const category = categories.find(c => c.id == product.category);
+        if (category) {
+            category.productCount++;
+        }
+    });
+    
+    // Guardar cambios
+    localStorage.setItem('categories', JSON.stringify(categories));
+}
+
+function showAddCategoryForm() {
+    const name = prompt('Nombre de la categoría:');
+    if (!name) return;
+    
+    const description = prompt('Descripción de la categoría:') || '';
+    
+    const newCategory = {
+        id: Date.now(),
+        name,
+        description,
+        productCount: 0,
+        status: 'active'
+    };
+    
+    categories.push(newCategory);
+    localStorage.setItem('categories', JSON.stringify(categories));
+    
+    renderCategoriesTable();
+    showNotification('Categoría agregada correctamente', 'success');
+}
+
+function editCategory(categoryId) {
+    const category = categories.find(c => c.id == categoryId);
+    if (!category) return;
+    
+    const newName = prompt('Nuevo nombre de la categoría:', category.name);
+    if (newName === null) return;
+    
+    const newDescription = prompt('Nueva descripción:', category.description) || '';
+    
+    category.name = newName;
+    category.description = newDescription;
+    
+    localStorage.setItem('categories', JSON.stringify(categories));
+    
+    renderCategoriesTable();
+    showNotification('Categoría actualizada correctamente', 'success');
+}
+
+function deleteCategory(categoryId) {
+    if (!confirm('¿Estás seguro de que quieres eliminar esta categoría? Los productos asociados quedarán sin categoría.')) return;
+    
+    categories = categories.filter(c => c.id != categoryId);
+    localStorage.setItem('categories', JSON.stringify(categories));
+    
+    renderCategoriesTable();
+    showNotification('Categoría eliminada correctamente', 'success');
+}
+
+function updateAnalytics() {
+    // En una implementación real, aquí se cargarían datos de analytics
+    console.log('Actualizando analíticas...');
 }
 
 // =============================================
@@ -609,45 +1329,6 @@ function initVisualEffects() {
             }, index * 500);
         });
     }
-    
-    // Partículas animadas
-    createParticles();
-}
-
-function createParticles() {
-    const container = document.getElementById('particles-container');
-    if (!container) return; // Evitar errores si no existe
-    
-    const particleCount = 30;
-    
-    // Obtener colores de variables CSS (con fallback)
-    const cssPrimary = getCSSVar('--primary') || '#00ff88';
-    const cssSecondary = getCSSVar('--secondary') || '#6c63ff';
-    const cssAccent = getCSSVar('--accent') || '#ff2e63';
-    const colors = [cssPrimary.trim(), cssSecondary.trim(), cssAccent.trim()];
-    
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        // Posición aleatoria
-        const left = Math.random() * 100;
-        const size = Math.random() * 4 + 2;
-        const delay = Math.random() * 15;
-        const duration = Math.random() * 10 + 10;
-        
-        particle.style.left = `${left}%`;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.animationDelay = `${delay}s`;
-        particle.style.animationDuration = `${duration}s`;
-        
-        // Color aleatorio
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.background = color;
-        
-        container.appendChild(particle);
-    }
 }
 
 // =============================================
@@ -657,7 +1338,7 @@ function createParticles() {
 function showNotification(message, type = 'info') {
     // Crear elemento de notificación
     const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
+    notification.className = `notification ${type}`;
     notification.textContent = message;
     
     // Agregar al DOM
@@ -677,10 +1358,6 @@ function showNotification(message, type = 'info') {
             }
         }, 300);
     }, 3000);
-}
-
-function getCSSVar(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name);
 }
 
 // =============================================
