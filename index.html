@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tercer Plano - Juguetería Ecológica 3D</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
     <style>
         /* RESET Y ESTILOS BASE */
         :root {
@@ -45,204 +47,52 @@
             background-color: var(--dark);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            cursor: none;
         }
 
-        /* FONDO CON IMPRESORA 3D ANIMADA */
-        .printer-bg {
+        /* CURSOR PERSONALIZADO */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.6s ease;
+            transition-property: width, height, border;
+        }
+
+        /* FONDO 3D CON THREE.JS */
+        #background-3d {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -2;
-            background: linear-gradient(135deg, var(--dark) 0%, #0d0d1a 100%);
-            overflow: hidden;
+            opacity: 0.7;
         }
 
-        .printer-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            height: 300px;
-            opacity: 0.1;
-            animation: float-printer 20s infinite ease-in-out;
-        }
-
-        .printer-machine {
-            position: relative;
-            width: 300px;
-            height: 200px;
-            margin: 0 auto;
-        }
-
-        .printer-base {
-            position: absolute;
-            bottom: 0;
-            width: 250px;
-            height: 30px;
-            background: linear-gradient(to top, #333, #555);
-            border-radius: 10px 10px 0 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .printer-frame {
-            position: absolute;
-            bottom: 30px;
-            width: 280px;
-            height: 150px;
-            background: rgba(60, 60, 80, 0.7);
-            border: 2px solid rgba(100, 100, 120, 0.5);
-            border-radius: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .printer-head {
-            position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 40px;
-            background: linear-gradient(to bottom, #444, #666);
-            border-radius: 10px;
-            animation: printHeadMove 6s infinite;
-        }
-
-        .nozzle {
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 15px;
-            height: 20px;
-            background: var(--accent);
-            border-radius: 0 0 5px 5px;
-        }
-
-        .print-bed {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 100px;
-            background: rgba(40, 40, 50, 0.8);
-            border: 1px solid rgba(108, 99, 255, 0.3);
-            border-radius: 5px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-
-        .printed-object {
-            width: 80px;
-            height: 0;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            transition: height 3s ease;
-            border-radius: 5px 5px 0 0;
-            animation: buildObject 8s infinite;
-        }
-
-        @keyframes buildObject {
-            0% { height: 0; }
-            50% { height: 70px; }
-            100% { height: 0; }
-        }
-
-        @keyframes printHeadMove {
-            0%, 100% { left: 30%; }
-            50% { left: 70%; }
-        }
-
-        @keyframes float-printer {
-            0%, 100% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
-            25% { transform: translate(-40%, -45%) rotate(5deg) scale(1.1); }
-            50% { transform: translate(-60%, -55%) rotate(-5deg) scale(0.9); }
-            75% { transform: translate(-45%, -50%) rotate(3deg) scale(1.05); }
-        }
-
-        /* Efectos de partículas */
-        .particles-container {
-            position: absolute;
-            top: 0;
-            left: 0;
+        /* EFECTO DE PARTÍCULAS */
+        #particles-js {
+            position: fixed;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: particleFloat 15s infinite linear;
-            opacity: 0;
-        }
-
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.7;
-            }
-            90% {
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(-100px) translateX(100px);
-                opacity: 0;
-            }
-        }
-
-        /* BARRA DE UBICACIONES */
-        .location-bar {
-            background: rgba(10, 10, 22, 0.9);
-            color: var(--text-light);
-            padding: 0.5rem 0;
-            font-size: 0.8rem;
-            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 1001;
-        }
-
-        .location-bar .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .locations {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .locations span {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .locations i {
-            color: var(--primary);
-        }
-
-        .location-fabrica i {
-            color: var(--primary);
-        }
-
-        .location-punto-venta i {
-            color: var(--accent);
+            background: transparent;
+            z-index: -1;
         }
 
         /* HEADER PRINCIPAL */
@@ -610,9 +460,15 @@
             padding: 2rem;
             border-radius: 20px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             border: 1px solid rgba(108, 99, 255, 0.3);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-wide {
+            max-width: 800px;
         }
 
         .modal-content h2 {
@@ -633,7 +489,7 @@
             font-weight: 500;
         }
 
-        .form-group input {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 0.8rem 1rem;
             border: 1px solid rgba(108, 99, 255, 0.3);
@@ -642,15 +498,21 @@
             color: var(--text);
             font-size: 1rem;
             transition: var(--transition);
+            font-family: inherit;
         }
 
-        .form-group input:focus {
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
         }
 
-        .form-group.error input {
+        .form-group.error input, .form-group.error textarea, .form-group.error select {
             border-color: var(--accent);
         }
 
@@ -1028,10 +890,28 @@
             font-size: 0.8rem;
         }
 
-        /* SECCIÓN QUIÉNES SOMOS */
+        /* SECCIÓN QUIÉNES SOMOS MEJORADA */
         .about {
             padding: 6rem 2rem;
             position: relative;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.1) 0%, transparent 70%);
+            z-index: -1;
+            animation: pulse 15s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.1); opacity: 0.8; }
         }
 
         .about-content {
@@ -1075,69 +955,82 @@
             align-items: center;
         }
 
-        .visual-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
+        .values-grid-extended {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
         }
 
-        .floating-card {
+        .value-card-extended {
+            background: rgba(26, 26, 46, 0.7);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .value-card-extended::before {
+            content: '';
             position: absolute;
-            width: 120px;
-            height: 120px;
-            border-radius: 20px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, transparent 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .value-card-extended:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .value-card-extended:hover::before {
+            opacity: 1;
+        }
+
+        .value-icon-extended {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            background: rgba(108, 99, 255, 0.1);
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(108, 99, 255, 0.1);
+            transition: var(--transition);
             border: 1px solid rgba(108, 99, 255, 0.3);
-            backdrop-filter: blur(10px);
-            text-align: center;
-            animation: float-card 10s infinite ease-in-out;
         }
 
-        .floating-card i {
-            font-size: 2rem;
-            margin-bottom: 10px;
+        .value-card-extended:hover .value-icon-extended {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: rgba(0, 255, 136, 0.5);
+            transform: scale(1.1);
+        }
+
+        .value-icon-extended i {
+            font-size: 1.5rem;
             color: var(--primary);
         }
 
-        .floating-card h4 {
+        .value-title-extended {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .value-description-extended {
+            color: var(--text-light);
             font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .card-1 {
-            top: 0;
-            left: 0;
-            animation-delay: 0s;
-        }
-
-        .card-2 {
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-            animation-delay: -3s;
-        }
-
-        .card-3 {
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            animation-delay: -6s;
-        }
-
-        @keyframes float-card {
-            0%, 100% {
-                transform: translateY(0) rotate(0deg);
-            }
-            33% {
-                transform: translateY(-10px) rotate(3deg);
-            }
-            66% {
-                transform: translateY(5px) rotate(-3deg);
-            }
+            line-height: 1.5;
         }
 
         /* SECCIÓN PRODUCTOS */
@@ -1381,17 +1274,61 @@
             transform: translateX(5px);
         }
 
-        /* PANEL DE ADMINISTRACIÓN */
+        /* PANEL DE ADMINISTRACIÓN MEJORADO */
         .admin-panel {
             padding: 6rem 2rem;
             background: rgba(10, 10, 22, 0.8);
+            min-height: 100vh;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .admin-actions {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
-            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .admin-tab {
+            padding: 0.8rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .admin-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .admin-tab-content {
+            display: none;
+        }
+
+        .admin-tab-content.active {
+            display: block;
         }
 
         .admin-products-grid {
@@ -1406,6 +1343,13 @@
             padding: 1.5rem;
             border: 1px solid rgba(108, 99, 255, 0.3);
             backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .admin-product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
         .admin-product-header {
@@ -1459,6 +1403,58 @@
         .admin-product-details {
             color: var(--text-light);
             font-size: 0.9rem;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(26, 26, 46, 0.7);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background: rgba(26, 26, 46, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .admin-table th, .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .admin-table th {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .admin-table tr:hover {
+            background: rgba(108, 99, 255, 0.05);
         }
 
         /* SECCIÓN CTA */
@@ -1569,6 +1565,78 @@
             font-size: 0.9rem;
         }
 
+        /* Ubicaciones en el footer */
+        .footer-locations {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .location-card {
+            background: rgba(26, 26, 46, 0.5);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .location-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .location-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .location-fabrica .location-icon {
+            color: var(--primary);
+        }
+
+        .location-punto-venta .location-icon {
+            color: var(--accent);
+        }
+
+        .location-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .location-address {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .location-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(108, 99, 255, 0.2);
+            color: var(--text);
+            border: 1px solid rgba(108, 99, 255, 0.5);
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .location-btn:hover {
+            background: rgba(108, 99, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
         /* NOTIFICACIONES */
         .notification {
             position: fixed;
@@ -1629,6 +1697,66 @@
             to { transform: rotate(360deg); }
         }
 
+        /* UPLOAD DE IMÁGENES */
+        .image-upload-container {
+            border: 2px dashed rgba(108, 99, 255, 0.3);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            background: rgba(10, 10, 22, 0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        .image-upload-container:hover {
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+
+        .image-upload-container.dragover {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: rgba(108, 99, 255, 0.2);
+            color: var(--text);
+            border: 1px solid rgba(108, 99, 255, 0.5);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-btn:hover {
+            background: rgba(108, 99, 255, 0.4);
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            max-width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
         /* MEDIA QUERIES */
         @media (max-width: 860px) {
             .nav-list, .auth-section {
@@ -1675,15 +1803,22 @@
                 justify-content: center;
             }
 
-            .location-bar {
-                font-size: 0.7rem;
-                position: relative;
-                z-index: 1001;
+            .locations-grid {
+                grid-template-columns: 1fr;
             }
-            
-            .locations {
+
+            .admin-header {
                 flex-direction: column;
-                gap: 0.5rem;
+                align-items: flex-start;
+            }
+
+            .admin-tabs {
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .values-grid-extended {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1738,37 +1873,27 @@
             .admin-actions {
                 flex-direction: column;
             }
+
+            .admin-table {
+                font-size: 0.8rem;
+            }
+
+            .admin-table th, .admin-table td {
+                padding: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Fondo con impresora 3D animada -->
-    <div class="printer-bg">
-        <div class="printer-container">
-            <div class="printer-machine">
-                <div class="printer-base"></div>
-                <div class="printer-frame"></div>
-                <div class="printer-head">
-                    <div class="nozzle"></div>
-                </div>
-                <div class="print-bed">
-                    <div class="printed-object"></div>
-                </div>
-            </div>
-        </div>
-        <div class="particles-container" id="particles-container"></div>
-    </div>
+    <!-- Cursor personalizado -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
 
-    <!-- Barra de ubicaciones -->
-    <div class="location-bar">
-        <div class="container">
-            <div class="locations">
-                <span class="location-fabrica"><i class="fas fa-industry"></i> Fábrica: Av. Libertad 845, Chillán</span>
-                <span class="location-punto-venta"><i class="fas fa-map-marker-alt"></i> Mall Arauco Chillán: Av. Collín #1090</span>
-                <span class="location-punto-venta"><i class="fas fa-map-marker-alt"></i> Outlet Vivo Chillán: Avenida Vicente Méndez 1541</span>
-            </div>
-        </div>
-    </div>
+    <!-- Fondo 3D con Three.js -->
+    <div id="background-3d"></div>
+
+    <!-- Efecto de partículas -->
+    <div id="particles-js"></div>
 
     <!-- Header -->
     <header class="header">
@@ -1871,6 +1996,90 @@
         </div>
     </div>
 
+    <!-- Modal de Gestión de Productos -->
+    <div class="modal" id="product-modal">
+        <div class="modal-content modal-wide">
+            <span class="close-modal" id="close-product-modal">&times;</span>
+            <h2 id="product-modal-title">Agregar Producto</h2>
+            <form id="product-form">
+                <div class="form-group">
+                    <label for="product-name">Nombre del Producto</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product-description">Descripción</label>
+                    <textarea id="product-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Categoría</label>
+                    <select id="product-category" required>
+                        <option value="">Selecciona una categoría</option>
+                        <option value="animales">Animales</option>
+                        <option value="robots">Robots</option>
+                        <option value="educativos">Educativos</option>
+                        <option value="vehiculos">Vehículos</option>
+                        <option value="construccion">Construcción</option>
+                        <option value="personalizado">Personalizado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-type">Tipo de Producto</label>
+                    <select id="product-type" required>
+                        <option value="">Selecciona un tipo</option>
+                        <option value="minorista">Minorista</option>
+                        <option value="mayorista">Mayorista</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-price">Precio ($)</label>
+                    <input type="number" id="product-price" min="0" step="0.01" required>
+                </div>
+                <div class="form-group" id="price2-group" style="display: none;">
+                    <label for="product-price2">Precio por 2 unidades ($)</label>
+                    <input type="number" id="product-price2" min="0" step="0.01">
+                </div>
+                <div class="form-group" id="min-quantity-group" style="display: none;">
+                    <label for="product-min-quantity">Cantidad Mínima (mayorista)</label>
+                    <input type="number" id="product-min-quantity" min="1" value="10">
+                </div>
+                
+                <!-- Sección de carga de imágenes -->
+                <div class="form-group">
+                    <label for="product-image">Imagen del Producto</label>
+                    <div class="image-upload-container" id="image-upload-container">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <p class="upload-text">Arrastra una imagen aquí o haz clic para seleccionar</p>
+                        <input type="file" id="product-image-file" accept="image/*" style="display: none;">
+                        <label for="product-image-file" class="upload-btn">Seleccionar Imagen</label>
+                        <div class="image-preview" id="image-preview">
+                            <img id="preview-img" src="" alt="Vista previa">
+                        </div>
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-light);">O ingresa una URL:</p>
+                    <input type="url" id="product-image-url" placeholder="URL de la imagen">
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-status">Estado</label>
+                    <select id="product-status">
+                        <option value="activo">Activo</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="product-tags">Etiquetas (separadas por comas)</label>
+                    <input type="text" id="product-tags" placeholder="ecológico, 3D, juguete, educativo">
+                </div>
+                <div class="form-actions" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary">Guardar Producto</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-product">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Sección Hero -->
     <section class="hero" id="inicio">
         <div class="hero-content">
@@ -1967,7 +2176,7 @@
         </div>
     </section>
 
-    <!-- Sección Quiénes Somos -->
+    <!-- Sección Quiénes Somos Mejorada -->
     <section class="about" id="quienes-somos">
         <div class="container">
             <div class="section-header">
@@ -2004,18 +2213,48 @@
                     </div>
                 </div>
                 <div class="about-visual">
-                    <div class="visual-container">
-                        <div class="floating-card card-1">
-                            <i class="fas fa-seedling"></i>
-                            <h4>Sostenible</h4>
+                    <div class="values-grid-extended">
+                        <div class="value-card-extended">
+                            <div class="value-icon-extended">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <h3 class="value-title-extended">Sostenibilidad</h3>
+                            <p class="value-description-extended">Materiales 100% biodegradables y procesos ecológicos en cada etapa de producción.</p>
                         </div>
-                        <div class="floating-card card-2">
-                            <i class="fas fa-brain"></i>
-                            <h4>Innovador</h4>
+                        <div class="value-card-extended">
+                            <div class="value-icon-extended">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="value-title-extended">Innovación</h3>
+                            <p class="value-description-extended">Tecnología 3D de vanguardia aplicada al diseño de juguetes educativos únicos.</p>
                         </div>
-                        <div class="floating-card card-3">
-                            <i class="fas fa-heart"></i>
-                            <h4>Hecho con Amor</h4>
+                        <div class="value-card-extended">
+                            <div class="value-icon-extended">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h3 class="value-title-extended">Artesanía</h3>
+                            <p class="value-description-extended">Cada pieza es creada con dedicación y atención meticulosa a los detalles.</p>
+                        </div>
+                        <div class="value-card-extended">
+                            <div class="value-icon-extended">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <h3 class="value-title-extended">Compromiso Local</h3>
+                            <p class="value-description-extended">Apoyamos el desarrollo económico de Ñuble y promovemos el talento local.</p>
+                        </div>
+                        <div class="value-card-extended">
+                            <div class="value-icon-extended">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="value-title-extended">Educación</h3>
+                            <p class="value-description-extended">Juguetes diseñados para estimular el aprendizaje y la creatividad en los niños.</p>
+                        </div>
+                        <div class="value-card-extended">
+                            <div class="value-icon-extended">
+                                <i class="fas fa-award"></i>
+                            </div>
+                            <h3 class="value-title-extended">Calidad</h3>
+                            <p class="value-description-extended">Rigurosos controles de calidad garantizan productos seguros y duraderos.</p>
                         </div>
                     </div>
                 </div>
@@ -2109,25 +2348,95 @@
         </div>
     </section>
 
-    <!-- Panel de Administración -->
+    <!-- Panel de Administración Mejorado -->
     <section class="admin-panel" id="admin-panel" style="display:none;">
         <div class="container">
-            <div class="section-header">
-                <p class="section-subtitle">Panel de Control</p>
-                <h2 class="section-title">Administración</h2>
+            <div class="admin-header">
+                <div class="section-header" style="text-align: left; margin-bottom: 0;">
+                    <p class="section-subtitle">Panel de Control</p>
+                    <h2 class="section-title">Administración</h2>
+                </div>
+                <div class="admin-actions">
+                    <button class="btn btn-primary" id="add-product-btn">
+                        <i class="fas fa-plus"></i> Agregar Producto
+                    </button>
+                    <button class="btn btn-secondary" id="refresh-products-btn">
+                        <i class="fas fa-sync"></i> Actualizar
+                    </button>
+                </div>
             </div>
-            
-            <div class="admin-actions">
-                <button class="btn btn-primary" id="add-product-btn">
-                    <i class="fas fa-plus"></i> Agregar Producto
-                </button>
-                <button class="btn btn-secondary" id="refresh-products-btn">
-                    <i class="fas fa-sync"></i> Actualizar Lista
-                </button>
+
+            <!-- Estadísticas -->
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-products">0</div>
+                    <div class="stat-label">Total Productos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="active-products">0</div>
+                    <div class="stat-label">Productos Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="minorista-products">0</div>
+                    <div class="stat-label">Productos Minoristas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="mayorista-products">0</div>
+                    <div class="stat-label">Productos Mayoristas</div>
+                </div>
             </div>
-            
-            <div class="admin-products-grid" id="admin-products-grid">
-                <!-- Los productos para administración se cargarán dinámicamente -->
+
+            <!-- Pestañas de Administración -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="products">Gestión de Productos</button>
+                <button class="admin-tab" data-tab="categories">Categorías</button>
+                <button class="admin-tab" data-tab="analytics">Analíticas</button>
+                <button class="admin-tab" data-tab="settings">Configuración</button>
+            </div>
+
+            <!-- Contenido de Pestañas -->
+            <div class="admin-tab-content active" id="products-tab">
+                <div class="admin-products-grid" id="admin-products-grid">
+                    <!-- Los productos para administración se cargarán dinámicamente -->
+                </div>
+            </div>
+
+            <div class="admin-tab-content" id="categories-tab">
+                <div class="admin-actions">
+                    <button class="btn btn-primary" id="add-category-btn">
+                        <i class="fas fa-plus"></i> Agregar Categoría
+                    </button>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Productos</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categories-table-body">
+                        <!-- Las categorías se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="admin-tab-content" id="analytics-tab">
+                <div class="coming-soon">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Analíticas en Desarrollo</h3>
+                    <p>Estamos trabajando en un sistema completo de analíticas para que puedas trackear el rendimiento de tus productos.</p>
+                </div>
+            </div>
+
+            <div class="admin-tab-content" id="settings-tab">
+                <div class="coming-soon">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Configuración</h3>
+                    <p>Próximamente podrás personalizar la configuración de tu tienda y preferencias de administración.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -2196,23 +2505,56 @@
                         <a href="https://www.instagram.com/tercerplanoestudio3d" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="https://wa.me/56962485838" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                         <a href="https://www.tiktok.com/@tercer.plano.estu" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                        <a href="https://www.facebook.com/tercerplanoestudio3d" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    </div>
-                    
-                    <h3 style="margin-top: 1.5rem;">Nuestras Ubicaciones</h3>
-                    <div class="contact-info">
-                        <p><i class="fas fa-industry"></i> Fábrica: Av. Libertad 845</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Mall Arauco: Av. Collín #1090</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Outlet Vivo: Av. Vicente Méndez 1541</p>
                     </div>
                 </div>
             </div>
+            
+            <!-- Ubicaciones en el footer -->
+            <div class="footer-locations">
+                <h3 style="text-align: center; margin-bottom: 2rem;">Nuestras Ubicaciones</h3>
+                <div class="locations-grid">
+                    <div class="location-card location-fabrica">
+                        <div class="location-icon">
+                            <i class="fas fa-industry"></i>
+                        </div>
+                        <h4 class="location-title">Fábrica</h4>
+                        <p class="location-address">Av. Libertad 845, Chillán</p>
+                        <a href="https://maps.google.com/?q=Av. Libertad 845, Chillán" target="_blank" class="location-btn">
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                    <div class="location-card location-punto-venta">
+                        <div class="location-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h4 class="location-title">Mall Arauco Chillán</h4>
+                        <p class="location-address">Av. Collín #1090</p>
+                        <a href="https://maps.google.com/?q=Av. Collín 1090, Chillán" target="_blank" class="location-btn">
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                    <div class="location-card location-punto-venta">
+                        <div class="location-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h4 class="location-title">Outlet Vivo Chillán</h4>
+                        <p class="location-address">Avenida Vicente Méndez 1541</p>
+                        <a href="https://maps.google.com/?q=Avenida Vicente Méndez 1541, Chillán" target="_blank" class="location-btn">
+                            Ver en Google Maps
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
             <div class="footer-bottom">
                 <p>&copy; 2025 Tercer Plano Estudio 3D. Todos los derechos reservados. | Hecho con ❤️ en Chillán, Ñuble</p>
             </div>
         </div>
     </footer>
 
+    <!-- Script para partículas -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    
     <script>
         // =============================================
         // CONFIGURACIÓN INICIAL Y VARIABLES GLOBALES
@@ -2228,7 +2570,336 @@
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
         let products = JSON.parse(localStorage.getItem('products')) || [];
         let wholesaleProducts = JSON.parse(localStorage.getItem('wholesaleProducts')) || [];
+        let categories = JSON.parse(localStorage.getItem('categories')) || [
+            { id: 1, name: 'Animales', description: 'Juguetes de animales', productCount: 0, status: 'active' },
+            { id: 2, name: 'Robots', description: 'Juguetes robóticos', productCount: 0, status: 'active' },
+            { id: 3, name: 'Educativos', description: 'Juguetes educativos', productCount: 0, status: 'active' },
+            { id: 4, name: 'Vehículos', description: 'Vehículos y medios de transporte', productCount: 0, status: 'active' },
+            { id: 5, name: 'Construcción', description: 'Juguetes de construcción', productCount: 0, status: 'active' },
+            { id: 6, name: 'Personalizado', description: 'Productos personalizados', productCount: 0, status: 'active' }
+        ];
+
+        // Producto en edición
+        let editingProduct = null;
+
+        // =============================================
+        // EFECTO DE CURSOR PERSONALIZADO
+        // =============================================
         
+        function initCustomCursor() {
+            const cursor = document.querySelector('.cursor');
+            const cursorFollower = document.querySelector('.cursor-follower');
+            
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+                
+                setTimeout(() => {
+                    cursorFollower.style.left = e.clientX + 'px';
+                    cursorFollower.style.top = e.clientY + 'px';
+                }, 100);
+            });
+            
+            // Efectos al pasar sobre elementos interactivos
+            const interactiveElements = document.querySelectorAll('a, button, .nav-link, .btn, .product-card, .value-card, .service-card');
+            
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.style.transform = 'scale(1.5)';
+                    cursorFollower.style.transform = 'scale(1.5)';
+                    cursorFollower.style.borderColor = 'var(--primary)';
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    cursor.style.transform = 'scale(1)';
+                    cursorFollower.style.transform = 'scale(1)';
+                    cursorFollower.style.borderColor = 'rgba(0, 255, 136, 0.5)';
+                });
+            });
+        }
+
+        // =============================================
+        // FONDO DE PARTÍCULAS
+        // =============================================
+        
+        function initParticles() {
+            particlesJS('particles-js', {
+                particles: {
+                    number: {
+                        value: 80,
+                        density: {
+                            enable: true,
+                            value_area: 800
+                        }
+                    },
+                    color: {
+                        value: ['#00ff88', '#6c63ff', '#ff2e63']
+                    },
+                    shape: {
+                        type: 'circle',
+                        stroke: {
+                            width: 0,
+                            color: '#000000'
+                        }
+                    },
+                    opacity: {
+                        value: 0.5,
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 1,
+                            opacity_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    size: {
+                        value: 3,
+                        random: true,
+                        anim: {
+                            enable: true,
+                            speed: 2,
+                            size_min: 0.1,
+                            sync: false
+                        }
+                    },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#6c63ff',
+                        opacity: 0.2,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 1,
+                        direction: 'none',
+                        random: true,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false,
+                        attract: {
+                            enable: false,
+                            rotateX: 600,
+                            rotateY: 1200
+                        }
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: {
+                            enable: true,
+                            mode: 'grab'
+                        },
+                        onclick: {
+                            enable: true,
+                            mode: 'push'
+                        },
+                        resize: true
+                    },
+                    modes: {
+                        grab: {
+                            distance: 140,
+                            line_linked: {
+                                opacity: 0.5
+                            }
+                        },
+                        push: {
+                            particles_nb: 4
+                        }
+                    }
+                },
+                retina_detect: true
+            });
+        }
+
+        // =============================================
+        // FONDO 3D CON THREE.JS
+        // =============================================
+        
+        function init3DBackground() {
+            const container = document.getElementById('background-3d');
+            if (!container) return;
+
+            // Configuración de la escena
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+
+            // Controles de órbita para interactividad
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableZoom = false;
+            controls.enablePan = false;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+
+            // Geometrías y materiales
+            const geometries = [
+                new THREE.BoxGeometry(1, 1, 1),
+                new THREE.SphereGeometry(0.7, 12, 12),
+                new THREE.ConeGeometry(0.5, 1.5, 8),
+                new THREE.CylinderGeometry(0.5, 0.5, 1, 12),
+                new THREE.TorusGeometry(0.6, 0.2, 12, 24)
+            ];
+
+            const materials = [
+                new THREE.MeshBasicMaterial({ 
+                    color: 0x00ff88, 
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.6
+                }),
+                new THREE.MeshBasicMaterial({ 
+                    color: 0x6c63ff, 
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.6
+                }),
+                new THREE.MeshBasicMaterial({ 
+                    color: 0xff2e63, 
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.6
+                })
+            ];
+
+            // Crear objetos 3D
+            const objects = [];
+            const objectCount = 15;
+
+            for (let i = 0; i < objectCount; i++) {
+                const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+                const material = materials[Math.floor(Math.random() * materials.length)];
+                const mesh = new THREE.Mesh(geometry, material);
+                
+                // Posición aleatoria
+                mesh.position.x = (Math.random() - 0.5) * 20;
+                mesh.position.y = (Math.random() - 0.5) * 20;
+                mesh.position.z = (Math.random() - 0.5) * 20;
+                
+                // Rotación aleatoria
+                mesh.rotation.x = Math.random() * Math.PI;
+                mesh.rotation.y = Math.random() * Math.PI;
+                
+                // Escala aleatoria
+                const scale = Math.random() * 0.8 + 0.5;
+                mesh.scale.set(scale, scale, scale);
+                
+                // Velocidad de rotación aleatoria
+                mesh.userData = {
+                    rotationSpeed: {
+                        x: (Math.random() - 0.5) * 0.02,
+                        y: (Math.random() - 0.5) * 0.02,
+                        z: (Math.random() - 0.5) * 0.02
+                    }
+                };
+                
+                scene.add(mesh);
+                objects.push(mesh);
+            }
+
+            // Posición de la cámara
+            camera.position.z = 15;
+
+            // Animación
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Rotar objetos
+                objects.forEach(obj => {
+                    obj.rotation.x += obj.userData.rotationSpeed.x;
+                    obj.rotation.y += obj.userData.rotationSpeed.y;
+                    obj.rotation.z += obj.userData.rotationSpeed.z;
+                });
+                
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            // Manejo de redimensionamiento
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            animate();
+        }
+
+        // =============================================
+        // SISTEMA DE CARGA DE IMÁGENES LOCALES
+        // =============================================
+        
+        function initImageUpload() {
+            const uploadContainer = document.getElementById('image-upload-container');
+            const fileInput = document.getElementById('product-image-file');
+            const preview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const urlInput = document.getElementById('product-image-url');
+            
+            // Arrastrar y soltar
+            uploadContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadContainer.classList.add('dragover');
+            });
+            
+            uploadContainer.addEventListener('dragleave', () => {
+                uploadContainer.classList.remove('dragover');
+            });
+            
+            uploadContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadContainer.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleImageSelection(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // Click para seleccionar
+            uploadContainer.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleImageSelection(e.target.files[0]);
+                }
+            });
+            
+            // Cuando se ingresa una URL
+            urlInput.addEventListener('input', () => {
+                if (urlInput.value) {
+                    previewImg.src = urlInput.value;
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                }
+            });
+            
+            function handleImageSelection(file) {
+                if (!file.type.match('image.*')) {
+                    showNotification('Por favor, selecciona solo archivos de imagen', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                    urlInput.value = ''; // Limpiar URL si se sube un archivo
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
         // =============================================
         // INICIALIZACIÓN
         // =============================================
@@ -2238,6 +2909,9 @@
             if (products.length === 0) {
                 loadInitialProducts();
             }
+            
+            // Guardar categorías iniciales
+            localStorage.setItem('categories', JSON.stringify(categories));
             
             // Configurar eventos
             setupEventListeners();
@@ -2253,8 +2927,14 @@
             
             // Configurar scroll
             setupScrollEffects();
+            
+            // Inicializar efectos
+            initCustomCursor();
+            initParticles();
+            init3DBackground();
+            initImageUpload();
         }
-        
+
         // =============================================
         // CONFIGURACIÓN DE EVENTOS
         // =============================================
@@ -2303,15 +2983,46 @@
             if (loginForm) loginForm.addEventListener('submit', handleLogin);
             if (registerForm) registerForm.addEventListener('submit', handleRegister);
             
-            // Administración
+            // Administración - Productos
             const addProductBtn = document.getElementById('add-product-btn');
             const refreshProductsBtn = document.getElementById('refresh-products-btn');
+            const productModal = document.getElementById('product-modal');
+            const productForm = document.getElementById('product-form');
+            const closeProductModal = document.getElementById('close-product-modal');
+            const cancelProduct = document.getElementById('cancel-product');
+            const productTypeSelect = document.getElementById('product-type');
             
             if (addProductBtn) {
                 addProductBtn.addEventListener('click', showAddProductForm);
             }
             if (refreshProductsBtn) {
                 refreshProductsBtn.addEventListener('click', refreshProducts);
+            }
+            if (closeProductModal) {
+                closeProductModal.addEventListener('click', () => closeModal(productModal));
+            }
+            if (cancelProduct) {
+                cancelProduct.addEventListener('click', () => closeModal(productModal));
+            }
+            if (productForm) {
+                productForm.addEventListener('submit', handleProductSubmit);
+            }
+            if (productTypeSelect) {
+                productTypeSelect.addEventListener('change', handleProductTypeChange);
+            }
+            
+            // Pestañas de administración
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    switchAdminTab(tabId);
+                });
+            });
+            
+            // Categorías
+            const addCategoryBtn = document.getElementById('add-category-btn');
+            if (addCategoryBtn) {
+                addCategoryBtn.addEventListener('click', showAddCategoryForm);
             }
             
             // Scroll suave para enlaces internos
@@ -2330,7 +3041,7 @@
                 });
             });
         }
-        
+
         function setupScrollEffects() {
             // Header scroll effect
             window.addEventListener('scroll', function() {
@@ -2342,7 +3053,7 @@
                 }
             });
         }
-        
+
         // =============================================
         // FUNCIONALIDADES DE INTERFAZ
         // =============================================
@@ -2358,7 +3069,7 @@
             menuToggle.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
-        
+
         function closeMobileMenu() {
             const mobileNav = document.getElementById('mobile-nav');
             const overlay = document.getElementById('overlay');
@@ -2370,19 +3081,28 @@
             menuToggle.classList.remove('active');
             document.body.style.overflow = '';
         }
-        
+
         function openModal(modal) {
             if (!modal) return;
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
-        
+
         function closeModal(modal) {
             if (!modal) return;
             modal.style.display = 'none';
             document.body.style.overflow = '';
+            // Resetear formulario de producto
+            if (modal.id === 'product-modal') {
+                editingProduct = null;
+                document.getElementById('product-form').reset();
+                document.getElementById('product-modal-title').textContent = 'Agregar Producto';
+                document.getElementById('price2-group').style.display = 'none';
+                document.getElementById('min-quantity-group').style.display = 'none';
+                document.getElementById('image-preview').style.display = 'none';
+            }
         }
-        
+
         function switchAuthTab(tab) {
             const loginTab = document.getElementById('login-tab');
             const registerTab = document.getElementById('register-tab');
@@ -2401,7 +3121,28 @@
                 registerForm.classList.add('active');
             }
         }
-        
+
+        function switchAdminTab(tabId) {
+            // Actualizar pestañas activas
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.admin-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Activar pestaña seleccionada
+            document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+            
+            // Cargar contenido específico de la pestaña
+            if (tabId === 'categories') {
+                renderCategoriesTable();
+            } else if (tabId === 'analytics') {
+                updateAnalytics();
+            }
+        }
+
         function updateUI() {
             const authBtn = document.getElementById('auth-btn');
             const logoutBtn = document.getElementById('logout-btn');
@@ -2428,6 +3169,9 @@
                     if (adminLink) adminLink.style.display = 'block';
                     if (mobileAdminLink) mobileAdminLink.style.display = 'block';
                     if (adminSection) adminSection.style.display = 'block';
+                    
+                    // Actualizar estadísticas
+                    updateAdminStats();
                 } else {
                     if (adminLink) adminLink.style.display = 'none';
                     if (mobileAdminLink) mobileAdminLink.style.display = 'none';
@@ -2450,7 +3194,7 @@
             // Renderizar productos según permisos
             renderProducts();
         }
-        
+
         // =============================================
         // SISTEMA DE AUTENTICACIÓN
         // =============================================
@@ -2496,7 +3240,7 @@
                 showNotification('Usuario o contraseña incorrectos', 'error');
             }
         }
-        
+
         function handleRegister(e) {
             e.preventDefault();
             const username = document.getElementById('register-username').value;
@@ -2535,77 +3279,137 @@
             closeModal(document.getElementById('auth-modal'));
             showNotification('¡Registro exitoso! Bienvenido/a', 'success');
         }
-        
+
         function logout() {
             currentUser = null;
             localStorage.removeItem('currentUser');
             updateUI();
             showNotification('Sesión cerrada correctamente', 'info');
         }
-        
+
         // =============================================
-        // GESTIÓN DE PRODUCTOS
+        // GESTIÓN DE PRODUCTOS MEJORADA
         // =============================================
         
         function loadInitialProducts() {
-            // Productos minoristas - Vacío para mostrar "Pronto Disponible"
-            products = [];
+            // Productos minoristas de ejemplo
+            products = [
+                {
+                    id: 1,
+                    name: 'Robot Eco-Amistoso',
+                    description: 'Un adorable robot impreso en 3D con materiales biodegradables. Perfecto para aprender sobre tecnología y sostenibilidad.',
+                    price: 12990,
+                    price2: 23980,
+                    category: 'robots',
+                    type: 'minorista',
+                    image: 'https://images.unsplash.com/photo-1589256469067-ea99122bbdc4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                    status: 'activo',
+                    tags: ['robot', 'ecológico', 'educativo', '3D']
+                },
+                {
+                    id: 2,
+                    name: 'Animales del Bosque',
+                    description: 'Set de animales del bosque chileno impresos en 3D con filamento PLA. Incluye zorro, puma y huemul.',
+                    price: 8990,
+                    price2: 16980,
+                    category: 'animales',
+                    type: 'minorista',
+                    image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                    status: 'activo',
+                    tags: ['animales', 'bosque', 'chileno', 'ecológico']
+                }
+            ];
             
-            // Productos mayoristas - Vacío por ahora
-            wholesaleProducts = [];
+            // Productos mayoristas de ejemplo
+            wholesaleProducts = [
+                {
+                    id: 3,
+                    name: 'Kit Educativo STEM',
+                    description: 'Kit completo de piezas educativas para aprendizaje STEM. Ideal para escuelas y talleres.',
+                    price: 5990,
+                    category: 'educativos',
+                    type: 'mayorista',
+                    minQuantity: 10,
+                    image: 'https://images.unsplash.com/photo-1596495577886-d920f1fb7238?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80',
+                    status: 'activo',
+                    tags: ['STEM', 'educativo', 'escuela', 'aprendizaje']
+                }
+            ];
             
             localStorage.setItem('products', JSON.stringify(products));
             localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
         }
-        
+
         function renderProducts() {
             renderMinoristaProducts();
             renderMayoristaProducts();
-            renderAdminProducts();
+            
+            if (currentUser && currentUser.isSuper) {
+                renderAdminProducts();
+                updateAdminStats();
+            }
         }
-        
+
         function renderMinoristaProducts() {
             const minoristaGrid = document.getElementById('minorista-grid');
             if (!minoristaGrid) return;
             
             minoristaGrid.innerHTML = '';
             
-            // Mostrar mensaje de "pronto disponible" para minorista
-            const comingSoon = document.createElement('div');
-            comingSoon.className = 'coming-soon';
-            comingSoon.innerHTML = `
-                <i class="fas fa-shopping-cart"></i>
-                <h3>Pronto Disponible</h3>
-                <p>Estamos preparando nuestro catálogo minorista con los mejores juguetes ecológicos impresos en 3D. ¡Contáctanos para más información!</p>
-                <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20sus%20productos%20minoristas" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
-                    <span>Contactar para Más Información</span>
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-            `;
-            minoristaGrid.appendChild(comingSoon);
+            const activeProducts = products.filter(p => p.status === 'activo');
+            
+            if (activeProducts.length === 0) {
+                // Mostrar mensaje de "pronto disponible" para minorista
+                const comingSoon = document.createElement('div');
+                comingSoon.className = 'coming-soon';
+                comingSoon.innerHTML = `
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Pronto Disponible</h3>
+                    <p>Estamos preparando nuestro catálogo minorista con los mejores juguetes ecológicos impresos en 3D. ¡Contáctanos para más información!</p>
+                    <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20sus%20productos%20minoristas" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
+                        <span>Contactar para Más Información</span>
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                `;
+                minoristaGrid.appendChild(comingSoon);
+            } else {
+                activeProducts.forEach(product => {
+                    const productCard = createProductCard(product, false);
+                    minoristaGrid.appendChild(productCard);
+                });
+            }
         }
-        
+
         function renderMayoristaProducts() {
             const mayoristaGrid = document.getElementById('mayorista-grid');
             if (!mayoristaGrid) return;
             
             mayoristaGrid.innerHTML = '';
             
-            // Mostrar mensaje de "pronto disponible" para mayorista
-            const comingSoon = document.createElement('div');
-            comingSoon.className = 'coming-soon';
-            comingSoon.innerHTML = `
-                <i class="fas fa-truck-loading"></i>
-                <h3>Pronto Disponible</h3>
-                <p>Si estás interesado en distribuir nuestros productos, contáctanos para acceder a precios especiales por volumen.</p>
-                <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20distribuir%20sus%20productos" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
-                    <span>Contactar para Distribución</span>
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-            `;
-            mayoristaGrid.appendChild(comingSoon);
+            const activeProducts = wholesaleProducts.filter(p => p.status === 'activo');
+            
+            if (activeProducts.length === 0) {
+                // Mostrar mensaje de "pronto disponible" para mayorista
+                const comingSoon = document.createElement('div');
+                comingSoon.className = 'coming-soon';
+                comingSoon.innerHTML = `
+                    <i class="fas fa-truck-loading"></i>
+                    <h3>Pronto Disponible</h3>
+                    <p>Si estás interesado en distribuir nuestros productos, contáctanos para acceder a precios especiales por volumen.</p>
+                    <a href="https://wa.me/56962485838?text=Hola!%20Estoy%20interesado%20en%20distribuir%20sus%20productos" target="_blank" class="btn btn-primary" style="margin-top: 1.5rem;">
+                        <span>Contactar para Distribución</span>
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                `;
+                mayoristaGrid.appendChild(comingSoon);
+            } else {
+                activeProducts.forEach(product => {
+                    const productCard = createProductCard(product, true);
+                    mayoristaGrid.appendChild(productCard);
+                });
+            }
         }
-        
+
         function renderAdminProducts() {
             const adminGrid = document.getElementById('admin-products-grid');
             if (!adminGrid) return;
@@ -2615,12 +3419,28 @@
             // Combinar productos minoristas y mayoristas para administración
             const allProducts = [...products, ...wholesaleProducts];
             
-            allProducts.forEach(product => {
-                const adminCard = createAdminProductCard(product);
-                adminGrid.appendChild(adminCard);
-            });
+            if (allProducts.length === 0) {
+                adminGrid.innerHTML = `
+                    <div class="coming-soon">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No hay productos</h3>
+                        <p>Aún no has agregado ningún producto. ¡Comienza agregando tu primer producto!</p>
+                        <button class="btn btn-primary" style="margin-top: 1.5rem;" id="add-first-product">
+                            <span>Agregar Primer Producto</span>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('add-first-product').addEventListener('click', showAddProductForm);
+            } else {
+                allProducts.forEach(product => {
+                    const adminCard = createAdminProductCard(product);
+                    adminGrid.appendChild(adminCard);
+                });
+            }
         }
-        
+
         function createProductCard(product, isWholesale) {
             const card = document.createElement('div');
             card.className = 'product-card';
@@ -2650,25 +3470,36 @@
             `;
             return card;
         }
-        
+
         function createAdminProductCard(product) {
-            const isWholesale = product.minQuantity !== undefined;
+            const isWholesale = product.type === 'mayorista';
             const card = document.createElement('div');
             card.className = 'admin-product-card';
+            
+            const statusBadge = product.status === 'activo' ? 
+                '<span style="color: var(--primary); font-weight: 600;">● Activo</span>' : 
+                '<span style="color: var(--accent); font-weight: 600;">● Inactivo</span>';
+            
             card.innerHTML = `
                 <div class="admin-product-header">
                     <h3 class="admin-product-title">${product.name}</h3>
                     <div class="admin-product-actions">
-                        <button class="admin-btn btn-edit" data-id="${product.id}" data-wholesale="${isWholesale}">Editar</button>
-                        <button class="admin-btn btn-delete" data-id="${product.id}" data-wholesale="${isWholesale}">Eliminar</button>
+                        <button class="admin-btn btn-edit" data-id="${product.id}" data-type="${product.type}">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="admin-btn btn-delete" data-id="${product.id}" data-type="${product.type}">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
                     </div>
                 </div>
                 <div class="admin-product-details">
                     <p><strong>Precio:</strong> $${product.price.toLocaleString('es-CL')}</p>
                     ${product.price2 ? `<p><strong>Precio 2 unidades:</strong> $${product.price2.toLocaleString('es-CL')}</p>` : ''}
-                    <p><strong>Categoría:</strong> ${product.category || 'Sin categoría'}</p>
-                    ${isWholesale ? `<p><strong>Tipo:</strong> Mayorista (Mín. ${product.minQuantity} unidades)</p>` : '<p><strong>Tipo:</strong> Minorista</p>'}
+                    <p><strong>Categoría:</strong> ${getCategoryName(product.category)}</p>
+                    <p><strong>Tipo:</strong> ${isWholesale ? 'Mayorista' : 'Minorista'} ${isWholesale ? `(Mín. ${product.minQuantity} unidades)` : ''}</p>
+                    <p><strong>Estado:</strong> ${statusBadge}</p>
                     <p>${product.description}</p>
+                    ${product.tags && product.tags.length > 0 ? `<p><strong>Etiquetas:</strong> ${product.tags.join(', ')}</p>` : ''}
                 </div>
             `;
             
@@ -2681,48 +3512,39 @@
             
             return card;
         }
-        
-        function showAddProductForm() {
-            const name = prompt('Nombre del producto:');
-            if (!name) return;
-            
-            const description = prompt('Descripción del producto:');
-            if (!description) return;
-            
-            const price = parseFloat(prompt('Precio del producto:'));
-            if (isNaN(price)) return;
-            
-            const category = prompt('Categoría (animales, robots, educativos, etc.):') || 'general';
-            
-            const isWholesale = confirm('¿Es un producto mayorista?');
-            let minQuantity = 0;
-            if (isWholesale) {
-                minQuantity = parseInt(prompt('Cantidad mínima para venta mayorista:'));
-                if (isNaN(minQuantity)) minQuantity = 10;
-            }
-            
-            const newProduct = {
-                id: Date.now(), // ID simple basado en timestamp
-                name,
-                description,
-                price,
-                category,
-                image: 'https://images.unsplash.com/photo-1567602901358-5ba17615aaeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'
-            };
-            
-            if (isWholesale) {
-                newProduct.minQuantity = minQuantity;
-                wholesaleProducts.push(newProduct);
-                localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
-            } else {
-                products.push(newProduct);
-                localStorage.setItem('products', JSON.stringify(products));
-            }
-            
-            renderProducts();
-            showNotification('Producto agregado correctamente', 'success');
+
+        function getCategoryName(categoryId) {
+            const category = categories.find(c => c.id == categoryId);
+            return category ? category.name : 'Sin categoría';
         }
-        
+
+        function showAddProductForm() {
+            editingProduct = null;
+            document.getElementById('product-modal-title').textContent = 'Agregar Producto';
+            document.getElementById('product-form').reset();
+            document.getElementById('price2-group').style.display = 'none';
+            document.getElementById('min-quantity-group').style.display = 'none';
+            document.getElementById('image-preview').style.display = 'none';
+            openModal(document.getElementById('product-modal'));
+        }
+
+        function handleProductTypeChange() {
+            const productType = document.getElementById('product-type').value;
+            const price2Group = document.getElementById('price2-group');
+            const minQuantityGroup = document.getElementById('min-quantity-group');
+            
+            if (productType === 'minorista') {
+                price2Group.style.display = 'block';
+                minQuantityGroup.style.display = 'none';
+            } else if (productType === 'mayorista') {
+                price2Group.style.display = 'none';
+                minQuantityGroup.style.display = 'block';
+            } else {
+                price2Group.style.display = 'none';
+                minQuantityGroup.style.display = 'none';
+            }
+        }
+
         function editProduct(id, isWholesale) {
             const productList = isWholesale ? wholesaleProducts : products;
             const product = productList.find(p => p.id === id);
@@ -2732,34 +3554,140 @@
                 return;
             }
             
-            const newName = prompt('Nuevo nombre:', product.name);
-            if (newName === null) return;
+            editingProduct = product;
             
-            const newDescription = prompt('Nueva descripción:', product.description);
-            if (newDescription === null) return;
+            document.getElementById('product-modal-title').textContent = 'Editar Producto';
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-description').value = product.description;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-type').value = product.type;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-price2').value = product.price2 || '';
+            document.getElementById('product-image-url').value = product.image;
+            document.getElementById('product-status').value = product.status;
+            document.getElementById('product-tags').value = product.tags ? product.tags.join(', ') : '';
             
-            const newPrice = parseFloat(prompt('Nuevo precio:', product.price));
-            if (isNaN(newPrice)) {
-                showNotification('Precio inválido', 'error');
+            // Mostrar vista previa de la imagen
+            const preview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            previewImg.src = product.image;
+            preview.style.display = 'block';
+            
+            if (product.type === 'mayorista') {
+                document.getElementById('product-min-quantity').value = product.minQuantity || 10;
+            }
+            
+            // Mostrar/ocultar campos según tipo
+            handleProductTypeChange();
+            
+            openModal(document.getElementById('product-modal'));
+        }
+
+        async function handleProductSubmit(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('product-name').value;
+            const description = document.getElementById('product-description').value;
+            const category = document.getElementById('product-category').value;
+            const type = document.getElementById('product-type').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const price2 = document.getElementById('product-price2').value ? parseFloat(document.getElementById('product-price2').value) : null;
+            const status = document.getElementById('product-status').value;
+            const tags = document.getElementById('product-tags').value ? document.getElementById('product-tags').value.split(',').map(tag => tag.trim()) : [];
+            const minQuantity = type === 'mayorista' ? parseInt(document.getElementById('product-min-quantity').value) : null;
+            
+            // Obtener imagen (archivo o URL)
+            const fileInput = document.getElementById('product-image-file');
+            const urlInput = document.getElementById('product-image-url');
+            let imageValue;
+            
+            if (fileInput.files.length > 0) {
+                // Usar archivo local
+                const file = fileInput.files[0];
+                imageValue = await readFileAsDataURL(file);
+            } else if (urlInput.value) {
+                // Usar URL
+                imageValue = urlInput.value;
+            } else {
+                showNotification('Por favor, proporciona una imagen (archivo o URL)', 'error');
                 return;
             }
             
-            product.name = newName;
-            product.description = newDescription;
-            product.price = newPrice;
-            
-            if (isWholesale) {
-                localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
-            } else {
-                localStorage.setItem('products', JSON.stringify(products));
+            // Validaciones
+            if (!name || !description || !category || !type || !price || !imageValue) {
+                showNotification('Por favor, completa todos los campos obligatorios', 'error');
+                return;
             }
             
+            const productData = {
+                id: editingProduct ? editingProduct.id : Date.now(),
+                name,
+                description,
+                category,
+                type,
+                price,
+                price2,
+                image: imageValue,
+                status,
+                tags
+            };
+            
+            if (type === 'mayorista') {
+                productData.minQuantity = minQuantity;
+            }
+            
+            if (editingProduct) {
+                // Editar producto existente
+                const wasWholesale = editingProduct.type === 'mayorista';
+                const isNowWholesale = type === 'mayorista';
+                
+                // Eliminar de la lista original
+                if (wasWholesale) {
+                    wholesaleProducts = wholesaleProducts.filter(p => p.id !== editingProduct.id);
+                } else {
+                    products = products.filter(p => p.id !== editingProduct.id);
+                }
+                
+                // Agregar a la lista correcta
+                if (isNowWholesale) {
+                    wholesaleProducts.push(productData);
+                } else {
+                    products.push(productData);
+                }
+                
+                showNotification('Producto actualizado correctamente', 'success');
+            } else {
+                // Agregar nuevo producto
+                if (type === 'mayorista') {
+                    wholesaleProducts.push(productData);
+                } else {
+                    products.push(productData);
+                }
+                
+                showNotification('Producto agregado correctamente', 'success');
+            }
+            
+            // Actualizar localStorage
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('wholesaleProducts', JSON.stringify(wholesaleProducts));
+            
+            // Cerrar modal y actualizar
+            closeModal(document.getElementById('product-modal'));
             renderProducts();
-            showNotification('Producto actualizado correctamente', 'success');
         }
-        
+
+        // Función auxiliar para leer un archivo como Data URL (base64)
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         function deleteProduct(id, isWholesale) {
-            if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+            if (!confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.')) return;
             
             if (isWholesale) {
                 wholesaleProducts = wholesaleProducts.filter(p => p.id !== id);
@@ -2772,12 +3700,150 @@
             renderProducts();
             showNotification('Producto eliminado correctamente', 'success');
         }
-        
+
         function refreshProducts() {
             renderProducts();
             showNotification('Productos actualizados', 'info');
         }
+
+        function updateAdminStats() {
+            const totalProducts = products.length + wholesaleProducts.length;
+            const activeProducts = [...products, ...wholesaleProducts].filter(p => p.status === 'activo').length;
+            const minoristaCount = products.length;
+            const mayoristaCount = wholesaleProducts.length;
+            
+            document.getElementById('total-products').textContent = totalProducts;
+            document.getElementById('active-products').textContent = activeProducts;
+            document.getElementById('minorista-products').textContent = minoristaCount;
+            document.getElementById('mayorista-products').textContent = mayoristaCount;
+        }
+
+        // =============================================
+        // GESTIÓN DE CATEGORÍAS
+        // =============================================
         
+        function renderCategoriesTable() {
+            const tableBody = document.getElementById('categories-table-body');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            // Actualizar conteo de productos por categoría
+            updateCategoryProductCounts();
+            
+            categories.forEach(category => {
+                const row = document.createElement('tr');
+                
+                const statusBadge = category.status === 'active' ? 
+                    '<span style="color: var(--primary);">● Activa</span>' : 
+                    '<span style="color: var(--accent);">● Inactiva</span>';
+                
+                row.innerHTML = `
+                    <td>${category.name}</td>
+                    <td>${category.description}</td>
+                    <td>${category.productCount}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="admin-btn btn-edit" data-category-id="${category.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="admin-btn btn-delete" data-category-id="${category.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Agregar event listeners a los botones
+            document.querySelectorAll('.admin-btn[data-category-id]').forEach(btn => {
+                if (btn.classList.contains('btn-edit')) {
+                    btn.addEventListener('click', (e) => {
+                        const categoryId = e.currentTarget.getAttribute('data-category-id');
+                        editCategory(categoryId);
+                    });
+                } else if (btn.classList.contains('btn-delete')) {
+                    btn.addEventListener('click', (e) => {
+                        const categoryId = e.currentTarget.getAttribute('data-category-id');
+                        deleteCategory(categoryId);
+                    });
+                }
+            });
+        }
+
+        function updateCategoryProductCounts() {
+            // Reiniciar conteos
+            categories.forEach(category => {
+                category.productCount = 0;
+            });
+            
+            // Contar productos por categoría
+            [...products, ...wholesaleProducts].forEach(product => {
+                const category = categories.find(c => c.id == product.category);
+                if (category) {
+                    category.productCount++;
+                }
+            });
+            
+            // Guardar cambios
+            localStorage.setItem('categories', JSON.stringify(categories));
+        }
+
+        function showAddCategoryForm() {
+            const name = prompt('Nombre de la categoría:');
+            if (!name) return;
+            
+            const description = prompt('Descripción de la categoría:') || '';
+            
+            const newCategory = {
+                id: Date.now(),
+                name,
+                description,
+                productCount: 0,
+                status: 'active'
+            };
+            
+            categories.push(newCategory);
+            localStorage.setItem('categories', JSON.stringify(categories));
+            
+            renderCategoriesTable();
+            showNotification('Categoría agregada correctamente', 'success');
+        }
+
+        function editCategory(categoryId) {
+            const category = categories.find(c => c.id == categoryId);
+            if (!category) return;
+            
+            const newName = prompt('Nuevo nombre de la categoría:', category.name);
+            if (newName === null) return;
+            
+            const newDescription = prompt('Nueva descripción:', category.description) || '';
+            
+            category.name = newName;
+            category.description = newDescription;
+            
+            localStorage.setItem('categories', JSON.stringify(categories));
+            
+            renderCategoriesTable();
+            showNotification('Categoría actualizada correctamente', 'success');
+        }
+
+        function deleteCategory(categoryId) {
+            if (!confirm('¿Estás seguro de que quieres eliminar esta categoría? Los productos asociados quedarán sin categoría.')) return;
+            
+            categories = categories.filter(c => c.id != categoryId);
+            localStorage.setItem('categories', JSON.stringify(categories));
+            
+            renderCategoriesTable();
+            showNotification('Categoría eliminada correctamente', 'success');
+        }
+
+        function updateAnalytics() {
+            // En una implementación real, aquí se cargarían datos de analytics
+            console.log('Actualizando analíticas...');
+        }
+
         // =============================================
         // EFECTOS VISUALES
         // =============================================
@@ -2804,47 +3870,8 @@
                     }, index * 500);
                 });
             }
-            
-            // Partículas animadas
-            createParticles();
         }
-        
-        function createParticles() {
-            const container = document.getElementById('particles-container');
-            if (!container) return; // Evitar errores si no existe
-            
-            const particleCount = 30;
-            
-            // Obtener colores de variables CSS (con fallback)
-            const cssPrimary = getCSSVar('--primary') || '#00ff88';
-            const cssSecondary = getCSSVar('--secondary') || '#6c63ff';
-            const cssAccent = getCSSVar('--accent') || '#ff2e63';
-            const colors = [cssPrimary.trim(), cssSecondary.trim(), cssAccent.trim()];
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                // Posición aleatoria
-                const left = Math.random() * 100;
-                const size = Math.random() * 4 + 2;
-                const delay = Math.random() * 15;
-                const duration = Math.random() * 10 + 10;
-                
-                particle.style.left = `${left}%`;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-                
-                // Color aleatorio
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.background = color;
-                
-                container.appendChild(particle);
-            }
-        }
-        
+
         // =============================================
         // UTILIDADES
         // =============================================
@@ -2852,7 +3879,7 @@
         function showNotification(message, type = 'info') {
             // Crear elemento de notificación
             const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
+            notification.className = `notification ${type}`;
             notification.textContent = message;
             
             // Agregar al DOM
@@ -2873,11 +3900,7 @@
                 }, 300);
             }, 3000);
         }
-        
-        function getCSSVar(name) {
-            return getComputedStyle(document.documentElement).getPropertyValue(name);
-        }
-        
+
         // =============================================
         // INICIAR APLICACIÓN
         // =============================================
