@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.5/build/spline-viewer.js"></script>
     <style>
         /* RESET Y ESTILOS BASE */
         :root {
@@ -47,32 +48,215 @@
             background-color: var(--dark);
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            cursor: none;
         }
 
-        /* CURSOR PERSONALIZADO */
-        .cursor {
+        /* AGENTE DE IA FLOTANTE */
+        .ai-agent {
             position: fixed;
-            width: 20px;
-            height: 20px;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background: var(--primary);
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: transform 0.2s ease;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 255, 136, 0.5);
+            transition: var(--transition);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
         }
 
-        .cursor-follower {
+        .ai-agent:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 255, 136, 0.7);
+        }
+
+        .ai-agent i {
+            font-size: 1.8rem;
+            color: var(--dark);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* MODAL DEL AGENTE DE IA */
+        .ai-modal {
+            display: none;
             position: fixed;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid rgba(0, 255, 136, 0.5);
-            pointer-events: none;
-            z-index: 9998;
-            transition: all 0.6s ease;
-            transition-property: width, height, border;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+        }
+
+        .ai-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--dark-light);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: hidden;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .ai-header i {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .ai-header h3 {
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .ai-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 15px;
+            max-width: 80%;
+        }
+
+        .ai-message {
+            background: rgba(108, 99, 255, 0.2);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-message {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            align-self: flex-end;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .ai-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid rgba(108, 99, 255, 0.2);
+            background: rgba(10, 10, 22, 0.5);
+        }
+
+        .ai-input input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(10, 10, 22, 0.7);
+            color: var(--text);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .ai-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+
+        .ai-input button {
+            margin-left: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--dark);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .ai-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .close-ai {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--dark);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-ai:hover {
+            color: var(--dark-light);
+        }
+
+        /* VISOR SPLINE 3D - POSICIÓN MODIFICADA */
+        .spline-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            max-width: 500px;
+            max-height: 400px;
+            z-index: 2;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--glow-strong);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            transition: var(--transition);
+        }
+
+        .spline-container:hover {
+            transform: translate(-50%, -50%) scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+        }
+
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        /* OCULTAR MARCA DE AGUA DE SPLINE */
+        spline-viewer::part(logo) {
+            display: none !important;
+        }
+
+        spline-viewer::part(watermark) {
+            display: none !important;
         }
 
         /* FONDO 3D CON THREE.JS */
@@ -623,97 +807,6 @@
             align-items: center;
             position: relative;
             height: 500px;
-        }
-
-        .hero-illustration {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 500px;
-        }
-
-        .printer-3d {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 200px;
-        }
-
-        .printer-body {
-            position: absolute;
-            bottom: 0;
-            width: 250px;
-            height: 150px;
-            background: linear-gradient(to top, #333, #555);
-            border-radius: 10px 10px 0 0;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .printer-glass {
-            position: absolute;
-            bottom: 30px;
-            width: 220px;
-            height: 120px;
-            background: rgba(100, 200, 255, 0.1);
-            border: 1px solid rgba(100, 200, 255, 0.3);
-            border-radius: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            overflow: hidden;
-        }
-
-        .printing-object {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 0;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            border-radius: 5px 5px 0 0;
-            animation: printing 6s infinite ease-in-out;
-        }
-
-        @keyframes printing {
-            0% { height: 0; }
-            50% { height: 100px; }
-            100% { height: 0; }
-        }
-
-        .printer-nozzle {
-            position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 30px;
-            background: var(--accent);
-            border-radius: 10px 10px 0 0;
-            animation: nozzleMove 4s infinite ease-in-out;
-        }
-
-        @keyframes nozzleMove {
-            0%, 100% { left: 30%; }
-            50% { left: 70%; }
-        }
-
-        .filament-spool {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: conic-gradient(var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
-            animation: rotateSpool 10s infinite linear;
-        }
-
-        @keyframes rotateSpool {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .btn {
@@ -1758,6 +1851,20 @@
         }
 
         /* MEDIA QUERIES */
+        @media (max-width: 1200px) {
+            .spline-container {
+                max-width: 450px;
+                max-height: 350px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .spline-container {
+                max-width: 400px;
+                max-height: 300px;
+            }
+        }
+
         @media (max-width: 860px) {
             .nav-list, .auth-section {
                 display: none;
@@ -1820,6 +1927,29 @@
             .values-grid-extended {
                 grid-template-columns: 1fr;
             }
+
+            .spline-container {
+                max-width: 350px;
+                max-height: 250px;
+            }
+            
+            .ai-agent {
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+                right: 20px;
+            }
+            
+            .ai-agent i {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .spline-container {
+                max-width: 300px;
+                max-height: 220px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1881,13 +2011,54 @@
             .admin-table th, .admin-table td {
                 padding: 0.5rem;
             }
+
+            .spline-container {
+                max-width: 250px;
+                max-height: 180px;
+            }
+            
+            .ai-agent {
+                width: 50px;
+                height: 50px;
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .ai-agent i {
+                font-size: 1.2rem;
+            }
+            
+            .ai-modal-content {
+                width: 95%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Cursor personalizado -->
-    <div class="cursor"></div>
-    <div class="cursor-follower"></div>
+    <!-- Agente de IA Flotante -->
+    <div class="ai-agent" id="ai-agent">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- Modal del Agente de IA -->
+    <div class="ai-modal" id="ai-modal">
+        <div class="ai-modal-content">
+            <div class="ai-header">
+                <i class="fas fa-robot"></i>
+                <h3>Asistente Tercer Plano</h3>
+                <button class="close-ai" id="close-ai">&times;</button>
+            </div>
+            <div class="ai-messages" id="ai-messages">
+                <div class="message ai-message">
+                    <p>¡Hola! Soy tu asistente virtual de Tercer Plano. ¿En qué puedo ayudarte hoy? Puedo responder preguntas sobre nuestros productos, servicios o cualquier duda que tengas.</p>
+                </div>
+            </div>
+            <div class="ai-input">
+                <input type="text" id="ai-input" placeholder="Escribe tu pregunta...">
+                <button id="ai-send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
 
     <!-- Fondo 3D con Three.js -->
     <div id="background-3d"></div>
@@ -2105,15 +2276,9 @@
             </div>
         </div>
         <div class="hero-visual">
-            <div class="hero-illustration">
-                <div class="printer-3d">
-                    <div class="printer-body"></div>
-                    <div class="printer-glass">
-                        <div class="printing-object"></div>
-                    </div>
-                    <div class="printer-nozzle"></div>
-                    <div class="filament-spool"></div>
-                </div>
+            <!-- Robot 3D de Spline -->
+            <div class="spline-container">
+                <spline-viewer url="https://prod.spline.design/Aah1PtbyO77w7qdX/scene.splinecode"></spline-viewer>
             </div>
         </div>
     </section>
@@ -2583,39 +2748,87 @@
         let editingProduct = null;
 
         // =============================================
-        // EFECTO DE CURSOR PERSONALIZADO
+        // AGENTE DE IA
         // =============================================
         
-        function initCustomCursor() {
-            const cursor = document.querySelector('.cursor');
-            const cursorFollower = document.querySelector('.cursor-follower');
+        function initAIAgent() {
+            const aiAgent = document.getElementById('ai-agent');
+            const aiModal = document.getElementById('ai-modal');
+            const closeAi = document.getElementById('close-ai');
+            const aiMessages = document.getElementById('ai-messages');
+            const aiInput = document.getElementById('ai-input');
+            const aiSend = document.getElementById('ai-send');
             
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-                
-                setTimeout(() => {
-                    cursorFollower.style.left = e.clientX + 'px';
-                    cursorFollower.style.top = e.clientY + 'px';
-                }, 100);
-            });
-            
-            // Efectos al pasar sobre elementos interactivos
-            const interactiveElements = document.querySelectorAll('a, button, .nav-link, .btn, .product-card, .value-card, .service-card');
-            
-            interactiveElements.forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    cursor.style.transform = 'scale(1.5)';
-                    cursorFollower.style.transform = 'scale(1.5)';
-                    cursorFollower.style.borderColor = 'var(--primary)';
+            if (aiAgent) {
+                aiAgent.addEventListener('click', () => {
+                    aiModal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
                 });
-                
-                el.addEventListener('mouseleave', () => {
-                    cursor.style.transform = 'scale(1)';
-                    cursorFollower.style.transform = 'scale(1)';
-                    cursorFollower.style.borderColor = 'rgba(0, 255, 136, 0.5)';
+            }
+            
+            if (closeAi) {
+                closeAi.addEventListener('click', () => {
+                    aiModal.style.display = 'none';
+                    document.body.style.overflow = '';
                 });
-            });
+            }
+            
+            // Enviar mensaje al agente de IA
+            if (aiSend) {
+                aiSend.addEventListener('click', sendAIMessage);
+            }
+            
+            if (aiInput) {
+                aiInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendAIMessage();
+                    }
+                });
+            }
+            
+            function sendAIMessage() {
+                const message = aiInput.value.trim();
+                if (message) {
+                    // Agregar mensaje del usuario
+                    addAIMessage(message, true);
+                    aiInput.value = '';
+                    
+                    // Simular respuesta del agente de IA
+                    setTimeout(() => {
+                        const response = generateAIResponse(message);
+                        addAIMessage(response, false);
+                    }, 1000);
+                }
+            }
+            
+            function addAIMessage(message, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+                messageDiv.innerHTML = `<p>${message}</p>`;
+                aiMessages.appendChild(messageDiv);
+                aiMessages.scrollTop = aiMessages.scrollHeight;
+            }
+            
+            function generateAIResponse(userMessage) {
+                const lowerMessage = userMessage.toLowerCase();
+                
+                // Respuestas predefinidas basadas en palabras clave
+                if (lowerMessage.includes('precio') || lowerMessage.includes('cuánto') || lowerMessage.includes('cuesta')) {
+                    return "Nuestros precios varían según el producto y la complejidad del diseño. Los juguetes pequeños comienzan en $5.990, y ofrecemos descuentos por compras al por mayor. ¿Te gustaría que te envíe nuestro catálogo completo?";
+                } else if (lowerMessage.includes('material') || lowerMessage.includes('ecológico') || lowerMessage.includes('sostenible')) {
+                    return "Utilizamos exclusivamente filamento PLA, un material biodegradable derivado del almidón de maíz. Es 100% ecológico, no tóxico y seguro para niños. ¡Nuestros productos son amigables con el planeta!";
+                } else if (lowerMessage.includes('personaliz') || lowerMessage.includes('diseño')) {
+                    return "¡Claro que sí! Ofrecemos servicios de personalización. Podemos crear diseños únicos basados en tus ideas, añadir nombres o modificar colores. Contáctanos por WhatsApp para discutir tu proyecto personalizado.";
+                } else if (lowerMessage.includes('tiempo') || lowerMessage.includes('entrega') || lowerMessage.includes('envío')) {
+                    return "El tiempo de producción varía según la complejidad del producto. Generalmente, los pedidos estándar se entregan en 3-5 días hábiles. Para diseños personalizados puede tomar hasta 7 días. Ofrecemos retiro en tienda o envíos dentro de Chillán.";
+                } else if (lowerMessage.includes('contacto') || lowerMessage.includes('ubicación') || lowerMessage.includes('dónde')) {
+                    return "Puedes encontrarnos en: Fábrica: Av. Libertad 845, Chillán. Puntos de venta: Mall Arauco Chillán y Outlet Vivo Chillán. También nos puedes contactar por WhatsApp al +56 9 6248 5838.";
+                } else if (lowerMessage.includes('hola') || lowerMessage.includes('buenas')) {
+                    return "¡Hola! Soy el asistente virtual de Tercer Plano. Estoy aquí para ayudarte con cualquier pregunta sobre nuestros productos, servicios o procesos. ¿En qué puedo asistirte hoy?";
+                } else {
+                    return "Gracias por tu consulta. Para información más específica sobre precios, diseños personalizados o disponibilidad, te recomiendo contactarnos directamente por WhatsApp al +56 9 6248 5838 donde nuestro equipo te atenderá personalmente. ¿Hay algo más en lo que pueda ayudarte?";
+                }
+            }
         }
 
         // =============================================
@@ -2929,7 +3142,7 @@
             setupScrollEffects();
             
             // Inicializar efectos
-            initCustomCursor();
+            initAIAgent();
             initParticles();
             init3DBackground();
             initImageUpload();
